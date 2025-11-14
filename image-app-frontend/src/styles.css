@@ -1,8 +1,7 @@
-
 /**
  * @Author:XYH
  * @Date:2025-11-14
- * @Description: 全局样式，蓝色商务风布局，适配 PC 与移动端
+ * @Description: 全局样式（增强版） - 蓝色商务风 + 中英文优秀展示效果 + 移动端适配
  */
 
 /* CSS 变量：蓝色商务主题 */
@@ -29,17 +28,19 @@ body {
   margin: 0;
   padding: 0;
   background: radial-gradient(circle at top left, #f0f4ff, #f7f8fc 45%, #eef3ff 100%);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+  "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
   color: var(--text-dark);
 }
 
-/* 顶部导航栏布局 */
+/* 布局壳 */
 .app-shell {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+/* 顶部导航栏 */
 .app-header {
   background: transparent;
   padding: 16px 0;
@@ -110,15 +111,15 @@ body {
   color: #fff;
 }
 
-/* 顶部广告位 */
+/* 顶部广告区 */
 .header-ad {
   width: 100%;
   max-width: 1320px;
-  margin: 8px auto 0;
-  padding: 0 16px 8px;
+  margin: 8px auto 8px;
+  padding: 0 16px;
 }
 
-/* 主体容器 */
+/* 主体内容区域 */
 .app-main {
   width: 100%;
   max-width: 1320px;
@@ -139,7 +140,7 @@ body {
   max-width: 640px;
 }
 
-/* 主网格：左侧功能 + 右侧历史 */
+/* 网格布局 */
 .main-grid {
   display: grid;
   grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.1fr);
@@ -147,7 +148,7 @@ body {
   margin-top: 18px;
 }
 
-/* Card 通用样式 */
+/* 卡片 */
 .card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -173,13 +174,41 @@ body {
   color: var(--text-gray);
 }
 
-/* 上传区域，支持点击与拖拽 */
+/* Tab 切换（Convert / OCR） */
+.tab {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.tab-active {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+/* 上传区 */
 .upload-area {
   margin-top: 6px;
   border-radius: var(--radius);
   border: 1px dashed var(--border);
   padding: 18px 16px;
-  background: linear-gradient(135deg, rgba(45, 113, 242, 0.04), rgba(255, 255, 255, 0.9));
+  background: linear-gradient(
+          135deg,
+          rgba(45, 113, 242, 0.04),
+          rgba(255, 255, 255, 0.9)
+  );
   display: flex;
   align-items: center;
   gap: 14px;
@@ -219,12 +248,12 @@ body {
   color: var(--text-gray);
 }
 
-/* 隐藏原生 input */
+/* 隐藏 input */
 input[type="file"] {
   display: none;
 }
 
-/* 预览图片 */
+/* 图片预览（增强） */
 .preview-wrapper {
   margin-top: 12px;
 }
@@ -237,11 +266,13 @@ input[type="file"] {
 
 .preview-image {
   max-width: 100%;
+  max-height: 260px;
+  object-fit: contain;
   border-radius: 10px;
   border: 1px solid var(--border);
 }
 
-/* 表单行布局 */
+/* 表单行 */
 .form-row {
   display: flex;
   flex-wrap: wrap;
@@ -272,7 +303,7 @@ input[type="file"] {
   box-shadow: 0 0 0 1px rgba(45, 113, 242, 0.16);
 }
 
-/* 开关区域 / 复选框行 */
+/* 复选框行 */
 .checkbox-row {
   display: flex;
   align-items: center;
@@ -304,11 +335,13 @@ input[type="file"] {
   transform: translateY(-0.5px);
 }
 
+.btn:active {
+  transform: scale(0.98);
+}
+
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
 }
 
 /* 次按钮 */
@@ -323,7 +356,7 @@ input[type="file"] {
   color: var(--primary);
 }
 
-/* 历史区域 */
+/* 历史记录 */
 .history {
   max-height: 520px;
   overflow: hidden;
@@ -336,6 +369,15 @@ input[type="file"] {
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
+}
+
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background-color: #cbd5f5;
+  border-radius: 999px;
 }
 
 .history-item {
@@ -357,7 +399,7 @@ input[type="file"] {
   white-space: pre-wrap;
 }
 
-/* 分页区域 */
+/* 分页 */
 .pagination {
   display: flex;
   align-items: center;
@@ -371,7 +413,27 @@ input[type="file"] {
   color: var(--text-gray);
 }
 
-/* 底部 Footer */
+.pagination-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.pagination-btn-active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* 底部区域 */
 .app-footer {
   border-top: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.9);
@@ -396,12 +458,11 @@ input[type="file"] {
   color: var(--text-gray);
 }
 
-/* 底部广告位 */
 .footer-ad {
   min-width: 240px;
 }
 
-/* 加载和错误提示 */
+/* Helper 文本 */
 .helper-text {
   font-size: 12px;
   color: var(--text-gray);
@@ -416,33 +477,7 @@ input[type="file"] {
   color: #15803d;
 }
 
-/* 自定义滚动条（仅桌面） */
-.history-list::-webkit-scrollbar {
-  width: 6px;
-}
-.history-list::-webkit-scrollbar-thumb {
-  background-color: #cbd5f5;
-  border-radius: 999px;
-}
-
-.tab {
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 1px solid #d0d7de;
-  background: white;
-  cursor: pointer;
-}
-
-.tab-active {
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 1px solid #0078ff;
-  background: #0078ff;
-  color: white;
-  cursor: pointer;
-}
-
-/* 响应式适配 */
+/* 响应式 */
 @media (max-width: 960px) {
   .main-grid {
     grid-template-columns: minmax(0, 1fr);
