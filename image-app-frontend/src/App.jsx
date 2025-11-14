@@ -62,11 +62,6 @@ const texts = {
     helperOcring: "Running OCR…",
     helperOcrSuccess: "OCR completed. Added to history.",
 
-    historyTitle: "OCR History",
-    historySubtitle: "Recent extracted text",
-    historySearchPlaceholder: "Search text…",
-    historyEmpty: "No OCR history.",
-    btnClearFilter: "Reset",
     footerText: "All tasks run on server. Please avoid sensitive images.",
   },
 
@@ -113,11 +108,6 @@ const texts = {
     helperOcring: "正在执行 OCR…",
     helperOcrSuccess: "OCR 完成，已加入历史。",
 
-    historyTitle: "OCR 历史记录",
-    historySubtitle: "最近识别的文字将显示在这里",
-    historySearchPlaceholder: "搜索历史文本…",
-    historyEmpty: "暂无历史记录。",
-    btnClearFilter: "重置",
     footerText: "所有处理均在服务器端完成，请勿上传敏感图片。",
   },
 };
@@ -334,9 +324,9 @@ export default function App() {
           <h1 className="page-title">{t.title}</h1>
           <p className="page-subtitle">{t.subtitle}</p>
 
-          <div className="main-grid">
+          <div className="main-grid fullwidth">
             {/* 左侧操作面板 */}
-            <section className="card">
+            <section className="tool-card">
               <div className="card-header">
                 <div>
                   <div className="card-title">{t.uploadTitle}</div>
@@ -533,15 +523,7 @@ export default function App() {
               </div>
             </section>
 
-            {/* 右侧：历史记录（只在 OCR 模式显示） */}
-            {mode === "ocr" && (
-                <HistoryPanel
-                    history={history}
-                    lang={lang}
-                    t={t}
-                    onReset={clearHistory}
-                />
-            )}
+            {/* 右侧历史记录已移除 */}
           </div>
           {/* 底部 Google Ads / 说明区域 */}
           <section className="bottom-ads">
