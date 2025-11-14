@@ -13,21 +13,45 @@ export default function App() {
 
   const handleSubmit = async () => {
     if (!file) return alert('请选择文件')
+
     const form = new FormData()
     form.append('file', file)
     form.append('targetFormat', targetFormat)
     form.append('ocr', String(enableOcr))
-    const resp = await fetch('/api/image/convert', { method:'POST', body: form })
+
+    // 👇 正确获取 API 基础地址
+    const baseUrl = import.meta.env.VITE_API_BASE_URL
+
+    // 👇 拼成完整路径
+    const resp = await fetch(`${baseUrl}/api/image/convert`, {
+      method: 'POST',
+      body: form
+    })
+
     if (!resp.ok) return alert('处理失败')
+
     const data = await resp.json()
-    if (data.ocrText) setHistory(prev => [{time: new Date().toLocaleString(), text: data.ocrText}, ...prev])
+
+    if (data.ocrText)
+      setHistory(prev => [
+        { time: new Date().toLocaleString(), text: data.ocrText },
+        ...prev
+      ])
+
     if (data.base64 && data.filename) {
       const a = document.createElement('a')
-      a.href = 'data:' + (data.contentType||'application/octet-stream') + ';base64,' + data.base64
+      a.href =
+          'data:' +
+          (data.contentType || 'application/octet-stream') +
+          ';base64,' +
+          data.base64
       a.download = data.filename
-      document.body.appendChild(a); a.click(); a.remove()
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
     }
   }
+
 
   return (
     <div style={{maxWidth: '1100px', margin: '0 auto', padding: 16}}>
