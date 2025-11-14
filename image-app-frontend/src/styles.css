@@ -76,7 +76,8 @@ button {
 
 .app-header-inner {
   width: 100%;
-  max-width: 1560px;
+  - max-width: 1560px;
++ max-width: 1720px;  /* 或者你直接 100% 也行 */
   margin: 0 auto;
   padding: 0 32px;
   display: flex;
@@ -146,7 +147,8 @@ button {
 /* 顶部广告位（弱化显示） */
 .header-ad {
   width: 100%;
-  max-width: 1560px;
+  - max-width: 1560px;
++ max-width: 1720px;
   margin: 4px auto 0;
   padding: 0 32px 8px;
 }
@@ -157,10 +159,12 @@ button {
 
 .app-main {
   width: 100%;
-  max-width: 1560px;                /* 画布整体宽度 */
+  - max-width: 1560px;
++ max-width: 1720px;             /* 画布整体更宽一些 */
   margin: 0 auto;
   padding: 22px 32px 30px;
-  min-height: calc(100vh - 150px);  /* 画布高度尽量占满屏幕 */
+  - min-height: calc(100vh - 150px);
++ min-height: calc(100vh - 200px); /* 稍微压低一点，为底部广告腾空间 */
 }
 
 /* 标题区域 */
@@ -268,7 +272,8 @@ button {
 .card-main {
   display: flex;
   flex-direction: column;
-  min-height: 640px;
+  - min-height: 640px;
++ min-height: 66vh;  /* 大约占屏幕 2/3 高度 */
 }
 
 .card-header {
@@ -509,11 +514,13 @@ input[type="file"] {
  * 历史记录 + 分页
  * ============================= */
 
+/* 历史记录卡片高度同步 */
 .history {
   max-height: none;
   display: flex;
   flex-direction: column;
-  min-height: 640px;   /* 与左侧高度一致，画布更饱满 */
+  - min-height: 640px;
++ min-height: 66vh;  /* 跟左侧保持一致，整个画布看起来就是铺满上部 2/3 */
 }
 
 .history-list {
@@ -591,6 +598,34 @@ input[type="file"] {
 }
 
 /* =============================
+ * 下方 Google Ads / Banner 区域
+ * ============================= */
+.bottom-ads {
+  margin-top: 18px;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(31, 41, 55, 0.9);
+}
+
+.bottom-ads-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* 左边可以放一点说明文字，右边是广告组件 */
+.bottom-ads-text {
+  flex: 1;
+  min-width: 220px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.bottom-ads-slot {
+  min-width: 260px;
+  flex: 0 0 auto;
+}
+/* =============================
  * 底部 Footer
  * ============================= */
 
@@ -603,7 +638,8 @@ input[type="file"] {
 
 .app-footer-inner {
   width: 100%;
-  max-width: 1560px;
+  - max-width: 1560px;
++ max-width: 1720px;
   margin: 0 auto;
   padding: 10px 32px 16px;
   display: flex;
@@ -612,7 +648,6 @@ input[type="file"] {
   gap: 10px;
   flex-wrap: wrap;
 }
-
 .footer-text {
   font-size: 11px;
   color: var(--text-sub);

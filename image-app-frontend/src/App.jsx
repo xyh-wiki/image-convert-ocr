@@ -543,6 +543,26 @@ export default function App() {
                 />
             )}
           </div>
+          {/* 底部 Google Ads / 说明区域 */}
+          <section className="bottom-ads">
+            <div className="bottom-ads-inner">
+              <div className="bottom-ads-text">
+                {/* 这里写一点 SEO 友好的介绍文案（中英均可） */}
+                Image Convert &amp; OCR 提供图片格式转换、压缩、裁剪、尺寸调整与 OCR 文本提取，
+                所有处理在服务器端完成，无需安装软件，适合日常办公与开发调试使用。
+              </div>
+              <div className="bottom-ads-slot">
+                <ins
+                    className="adsbygoogle"
+                    style={{ display: "block" }}
+                    data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                    data-ad-slot="2233445566"
+                    data-ad-format="auto"
+                    data-full-width-responsive="true"
+                ></ins>
+              </div>
+            </div>
+          </section>
         </main>
 
         {/* 底部 */}
