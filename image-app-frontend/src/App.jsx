@@ -389,8 +389,9 @@ export default function App() {
                           value={targetFormat}
                           onChange={(e) => setTargetFormat(e.target.value)}
                       >
+                        {/* 这里的 value 要和后端支持列表严格一致 */}
                         <option value="png">PNG</option>
-                        <option value="jpeg">JPEG</option>
+                        <option value="jpg">JPEG</option>   {/* ← 改成 jpg */}
                         <option value="webp">WebP</option>
                         <option value="tiff">TIFF</option>
                         <option value="bmp">BMP</option>
