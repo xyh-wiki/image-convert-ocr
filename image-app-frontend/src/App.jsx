@@ -393,7 +393,6 @@ export default function App() {
                         <option value="png">PNG</option>
                         <option value="jpg">JPEG</option>   {/* ← 改成 jpg */}
                         <option value="webp">WebP</option>
-                        <option value="tiff">TIFF</option>
                         <option value="bmp">BMP</option>
                         <option value="gif">GIF</option>
                         <option value="psd">PSD</option>

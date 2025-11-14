@@ -34,7 +34,7 @@ public class ImageConvertService {
      * 注意：这里是“内部归一化后的格式”，比如 jpg 代表所有 jpeg/jpg
      */
     private static final Set<String> SUPPORTED_FORMATS = new HashSet<>(
-            Arrays.asList("jpg", "png", "gif", "tiff", "bmp", "webp", "psd")
+            Arrays.asList("jpg", "png", "gif", "bmp", "webp", "psd")
     );
 
     /**
@@ -254,8 +254,6 @@ public class ImageConvertService {
                 return "image/gif";
             case "bmp":
                 return "image/bmp";
-            case "tiff":
-                return "image/tiff";
             case "webp":
                 return "image/webp";
             case "psd":
