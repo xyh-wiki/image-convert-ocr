@@ -1,18 +1,16 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+
+// Author:XYH Date:2025-11-14 Description: Vite 配置文件，启用 React 支持与路径别名
 export default defineConfig({
   plugins: [react()],
-  server: {
-    port: 3000,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true
-      }
-    }
+  resolve: {
+    alias: {
+      "@": "/src",
+    },
   },
-  build: {
-    outDir: 'dist'
-  }
-})
+  server: {
+    port: 5173,
+  },
+});
