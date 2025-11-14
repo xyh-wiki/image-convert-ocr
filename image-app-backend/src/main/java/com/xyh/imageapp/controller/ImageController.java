@@ -29,12 +29,17 @@ public class ImageController {
     }
 
     @PostMapping("/convert")
-    public ResponseEntity<Map<String,Object>> convert(@RequestPart("file") MultipartFile file,
-                                                      @RequestParam("targetFormat") String targetFormat,
-                                                      @RequestParam(value = "ocr", required = false, defaultValue = "false") boolean ocr) throws Exception {
+    public ResponseEntity<Map<String,Object>> convert(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam("targetFormat") String targetFormat,
+            @RequestParam(value = "ocr", required = false, defaultValue = "false") String ocrFlag
+    ) throws Exception {
+
+        boolean ocr = "true".equalsIgnoreCase(ocrFlag);
+
         byte[] bytes = convertService.convert(file, targetFormat);
         String filename = baseName(file.getOriginalFilename()) + "." + targetFormat;
-        String encoded = URLEncoder.encode(filename, StandardCharsets.UTF_8);
+        String encoded = URLEncoder.encode(filename, String.valueOf(StandardCharsets.UTF_8));
 
         Map<String,Object> resp = new HashMap<>();
         String base64 = java.util.Base64.getEncoder().encodeToString(bytes);
@@ -42,10 +47,12 @@ public class ImageController {
         resp.put("contentType", guessContentType(targetFormat));
         resp.put("base64", base64);
 
+        // 🔥 仅当 ocr=true 时才执行 OCR
         if (ocr) {
             String text = ocrService.ocrByFile(file);
             resp.put("ocrText", text);
         }
+
         return ResponseEntity.ok(resp);
     }
 
@@ -54,7 +61,7 @@ public class ImageController {
                                            @RequestParam("targetFormat") String targetFormat) throws Exception {
         byte[] bytes = convertService.convert(file, targetFormat);
         String filename = baseName(file.getOriginalFilename()) + "." + targetFormat;
-        String encoded = URLEncoder.encode(filename, StandardCharsets.UTF_8);
+        String encoded = URLEncoder.encode(filename, String.valueOf(StandardCharsets.UTF_8));
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(guessContentType(targetFormat)))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encoded)
