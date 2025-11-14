@@ -1,22 +1,42 @@
-# Author:XYH Date:2025-11-14 Description: 使用本地已构建的 Spring Boot Jar 构建运行镜像
-FROM eclipse-temurin:17-jre
+# ================================
+# Author: XYH
+# Date: 2025-11-14
+# Description:
+# Spring Boot 后端 Dockerfile（使用 Maven 构建 + JDK17）
+# ================================
 
-# 设置工作目录
-WORKDIR /opt/app
+##############################
+# 1. 构建阶段（Build Stage）
+##############################
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 
-# 只复制已经在宿主机 target 目录中打包好的可执行 Jar
-# 注意：这里的路径是相对于 docker build 的上下文（父工程目录）
-COPY image-app-backend/target/image-app-backend-1.0.0.jar app.jar
+WORKDIR /app
 
-# 设置端口和 JVM 参数（按需可改）
-ENV SERVER_PORT=8080
-ENV JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75 -Dfile.encoding=UTF-8"
+# 先复制 Maven 配置，加快依赖下载
+COPY pom.xml .
+COPY image-app-backend/pom.xml image-app-backend/pom.xml
 
+RUN mvn -q -e -DskipTests dependency:go-offline
+
+# 再复制所有源码
+COPY . .
+
+# 构建可执行 jar
+RUN mvn -q -e -DskipTests -pl image-app-backend -am package
+
+
+##############################
+# 2. 运行阶段（Runtime Stage）
+##############################
+FROM eclipse-temurin:17-jdk-alpine
+
+WORKDIR /app
+
+# 拷贝构建好的 jar
+COPY --from=builder /app/image-app-backend/target/*.jar app.jar
+
+# 暴露 Spring Boot 默认端口
 EXPOSE 8080
 
-# 健康检查接口，供 Dokploy / Docker 检测容器是否存活
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-  CMD curl -fsS http://localhost:8080/actuator/health || exit 1
-
-# 容器启动命令：直接运行 Spring Boot 可执行 Jar
-ENTRYPOINT ["/bin/sh","-lc","java $JAVA_OPTS -jar app.jar"]
+# 启动命令
+ENTRYPOINT ["java", "-jar", "app.jar"]
