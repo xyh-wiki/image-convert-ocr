@@ -74,16 +74,8 @@ button {
   padding: 14px 0 8px;
 }
 
-.app-header-inner {
-  width: 100%;
-  - max-width: 1560px;
-+ max-width: 1720px;  /* 或者你直接 100% 也行 */
-  margin: 0 auto;
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+.app-header-inner,
+
 
 /* Logo 与文字 */
 .brand {
@@ -145,27 +137,13 @@ button {
 }
 
 /* 顶部广告位（弱化显示） */
-.header-ad {
-  width: 100%;
-  - max-width: 1560px;
-+ max-width: 1720px;
-  margin: 4px auto 0;
-  padding: 0 32px 8px;
-}
+.header-ad,
 
 /* =============================
  * 主体画布区域
  * ============================= */
 
-.app-main {
-  width: 100%;
-  - max-width: 1560px;
-+ max-width: 1720px;             /* 画布整体更宽一些 */
-  margin: 0 auto;
-  padding: 22px 32px 30px;
-  - min-height: calc(100vh - 150px);
-+ min-height: calc(100vh - 200px); /* 稍微压低一点，为底部广告腾空间 */
-}
+.app-main,
 
 /* 标题区域 */
 .page-title {
@@ -272,10 +250,8 @@ button {
 .card-main {
   display: flex;
   flex-direction: column;
-  - min-height: 640px;
-+ min-height: 66vh;  /* 大约占屏幕 2/3 高度 */
+  min-height: 66vh;  /* 大约占屏幕 2/3 高度 */
 }
-
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -515,12 +491,12 @@ input[type="file"] {
  * ============================= */
 
 /* 历史记录卡片高度同步 */
+
 .history {
   max-height: none;
   display: flex;
   flex-direction: column;
-  - min-height: 640px;
-+ min-height: 66vh;  /* 跟左侧保持一致，整个画布看起来就是铺满上部 2/3 */
+  min-height: 66vh;  /* 跟左侧保持一致，整个画布看起来就是铺满上部 2/3 */
 }
 
 .history-list {
@@ -638,16 +614,10 @@ input[type="file"] {
 
 .app-footer-inner {
   width: 100%;
-  - max-width: 1560px;
-+ max-width: 1720px;
+  max-width: 100%;   /* 或者直接删掉 max-width 这一行 */
   margin: 0 auto;
-  padding: 10px 32px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
 }
+
 .footer-text {
   font-size: 11px;
   color: var(--text-sub);
@@ -670,10 +640,11 @@ input[type="file"] {
     grid-template-columns: repeat(3, minmax(120px, 1fr));
   }
 
-  .card-main,
+  /* 删掉下面这两行 */
+  /* .card-main,
   .history {
     min-height: auto;
-  }
+  } */
 }
 
 @media (max-width: 720px) {

@@ -548,8 +548,8 @@ export default function App() {
             <div className="bottom-ads-inner">
               <div className="bottom-ads-text">
                 {/* 这里写一点 SEO 友好的介绍文案（中英均可） */}
-                Image Convert &amp; OCR 提供图片格式转换、压缩、裁剪、尺寸调整与 OCR 文本提取，
-                所有处理在服务器端完成，无需安装软件，适合日常办公与开发调试使用。
+                Image Convert & OCR provides image format conversion, compression, cropping, resizing, and OCR text extraction.
+                All processing is completed on the server side, requiring no software installation, making it suitable for daily office work and development debugging.
               </div>
               <div className="bottom-ads-slot">
                 <ins
