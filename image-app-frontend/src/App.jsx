@@ -1,149 +1,182 @@
 /**
  * @Author:XYH
- * @Date:2025-11-14
- * @Description: 前端主页面：支持图片格式转换、OCR 独立模式、历史记录分页、多语言切换与 Google Ads
+ * @Date:2025-11-15
+ * @Description: 统一图片工具平台前端 —— 支持格式转换 / OCR / 压缩 / 裁剪 / 调整尺寸
  */
 
 import React, { useState, useEffect, useCallback } from "react";
 import HistoryPanel from "./components/HistoryPanel.jsx";
-import { convertImage, ocrImage } from "./utils/api.js";
+import {
+  convertImage,
+  ocrImage,
+  compressImage,
+  cropImage,
+  resizeImage,
+} from "./utils/api.js";
 
 /**
- * 文案字典：支持英文与简体中文
+ * 多语言文案
  */
 const texts = {
   en: {
-    brandMain: "Image Convert & OCR",
-    brandSub: "Online image format converter with optional OCR text extraction",
-    title: "Online Image Format Converter & OCR",
-    subtitle:
-        "Convert PNG, JPEG, WebP, TIFF, GIF, BMP, PSD images or extract text via OCR. Files are processed in real time on the server.",
+    brandMain: "Image Tools Platform",
+    brandSub: "Convert · OCR · Compress · Crop · Resize",
+    title: "Online Image Tools",
+    subtitle: "Convert, compress, crop, resize or extract text via OCR.",
+
     uploadTitle: "Upload & Tools",
     uploadDesc:
-        "Choose a mode below: pure format conversion or OCR-only text extraction, then upload an image.",
+        "Choose a tool mode below. Upload an image to start processing.",
     uploadMain: "Click or drag image here to upload",
-    uploadSub: "Supported formats: PNG, JPEG, WEBP, TIFF, GIF, BMP, PSD",
-    uploadMeta:
-        "Max size depends on server configuration. Clear images give better OCR results.",
-    targetLabel: "Target format",
-    ocrLabel: "Enable OCR text extraction",
-    ocrHint: "When disabled, only format conversion will be performed.",
-    btnConvert: "Start",
-    historyTitle: "OCR History",
-    historySubtitle: "Recent text extracted from uploaded images",
-    historySearchPlaceholder: "Search in OCR text...",
-    historyEmpty:
-        "No OCR history yet. Upload an image with OCR enabled to see results here.",
-    btnClearFilter: "Reset",
-    footerText:
-        "All conversions happen on the server. Please avoid uploading sensitive or confidential content.",
-    helperNoFile: "Please select or drop an image file first.",
-    helperConverting:
-        "Processing image... This may take a few seconds for large files.",
-    helperOcring: "Running OCR... Please wait a moment.",
-    helperSuccess: "Conversion completed. Download should start automatically.",
-    helperOcrSuccess: "OCR completed. The result has been added to history.",
+    uploadSub: "Supported: PNG, JPEG, WEBP, TIFF, GIF, BMP, PSD",
+    uploadMeta: "Clear images produce better results.",
+
+    convertTab: "Convert",
+    ocrTab: "OCR",
+    compressTab: "Compress",
+    cropTab: "Crop",
+    resizeTab: "Resize",
+
+    targetLabel: "Target Format",
+
+    compressLabel: "Compression (%)",
+    cropLabel: "Crop Region",
+    cropX: "X",
+    cropY: "Y",
+    cropW: "Width",
+    cropH: "Height",
+
+    resizeLabel: "Resize",
+    resizeW: "Width",
+    resizeH: "Height",
+
+    btnStart: "Start",
+    btnClear: "Clear",
+
+    helperNoFile: "Please select or drop an image first.",
+    helperConverting: "Processing…",
+    helperSuccess: "Completed. Downloading…",
     helperErrorPrefix: "Error: ",
-    convertTab: "Format Convert",
-    ocrTab: "OCR Only",
+
+    // OCR
+    helperOcring: "Running OCR…",
+    helperOcrSuccess: "OCR completed. Added to history.",
+
+    historyTitle: "OCR History",
+    historySubtitle: "Recent extracted text",
+    historySearchPlaceholder: "Search text…",
+    historyEmpty: "No OCR history.",
+    btnClearFilter: "Reset",
+    footerText: "All tasks run on server. Please avoid sensitive images.",
   },
+
   zh: {
-    brandMain: "图片转换与 OCR 提取",
-    brandSub: "在线图片格式转换，支持可选 OCR 文本识别",
-    title: "在线图片格式转换 & OCR 中文识别",
-    subtitle:
-        "支持 PNG、JPEG、WebP、TIFF、GIF、BMP、PSD 等格式在线互转，并可选开启 OCR 将图片中的文字提取为可编辑文本。",
-    uploadTitle: "上传与工具",
-    uploadDesc: "在下方选择模式：仅格式转换 或 仅 OCR 文本识别，然后上传图片。",
-    uploadMain: "点击或拖拽图片到此区域上传",
-    uploadSub: "支持格式：PNG、JPEG、WEBP、TIFF、GIF、BMP、PSD",
-    uploadMeta: "最大文件大小由服务器限制决定，清晰图片有助于提升识别效果。",
-    targetLabel: "目标格式",
-    ocrLabel: "开启 OCR 文本识别",
-    ocrHint: "关闭时只做格式转换，不执行文本识别。",
-    btnConvert: "开始处理",
-    historyTitle: "OCR 历史记录",
-    historySubtitle: "最近上传图片的文字识别结果会展示在这里",
-    historySearchPlaceholder: "在历史文本中搜索…",
-    historyEmpty: "当前还没有 OCR 历史。勾选 OCR 并上传图片后，这里会展示识别结果。",
-    btnClearFilter: "重置",
-    footerText:
-        "所有转换均在服务器端进行，请勿上传涉密或包含敏感信息的图片文件。",
-    helperNoFile: "请先选择或拖拽一张图片文件。",
-    helperConverting: "正在进行格式转换… 大图可能需要几秒钟时间。",
-    helperOcring: "正在进行 OCR 识别，请稍候。",
-    helperSuccess: "格式转换完成，浏览器应自动开始下载转换后的图片。",
-    helperOcrSuccess: "OCR 完成，结果已加入右侧历史列表。",
-    helperErrorPrefix: "处理失败：",
+    brandMain: "图片工具平台",
+    brandSub: "格式转换 · OCR · 压缩 · 裁剪 · 调整尺寸",
+    title: "在线图片工具合集",
+    subtitle: "支持格式转换、压缩、裁剪、尺寸修改与 OCR 文字提取",
+
+    uploadTitle: "上传与工具面板",
+    uploadDesc: "选择需要使用的工具模式，然后上传图片即可开始处理。",
+    uploadMain: "点击或拖拽上传图片",
+    uploadSub: "支持：PNG、JPEG、WEBP、TIFF、GIF、BMP、PSD",
+    uploadMeta: "图片越清晰，效果越佳。",
+
     convertTab: "格式转换",
-    ocrTab: "仅 OCR 识别",
+    ocrTab: "OCR 识别",
+    compressTab: "图片压缩",
+    cropTab: "图片裁剪",
+    resizeTab: "调整尺寸",
+
+    targetLabel: "目标格式",
+
+    compressLabel: "压缩比例 (%)",
+    cropLabel: "裁剪区域",
+    cropX: "X",
+    cropY: "Y",
+    cropW: "宽度",
+    cropH: "高度",
+
+    resizeLabel: "调整尺寸",
+    resizeW: "宽度",
+    resizeH: "高度",
+
+    btnStart: "开始处理",
+    btnClear: "清空",
+
+    helperNoFile: "请先选择或拖拽一张图片。",
+    helperConverting: "正在处理…",
+    helperSuccess: "处理完成，正在下载…",
+    helperErrorPrefix: "错误：",
+
+    // OCR
+    helperOcring: "正在执行 OCR…",
+    helperOcrSuccess: "OCR 完成，已加入历史。",
+
+    historyTitle: "OCR 历史记录",
+    historySubtitle: "最近识别的文字将显示在这里",
+    historySearchPlaceholder: "搜索历史文本…",
+    historyEmpty: "暂无历史记录。",
+    btnClearFilter: "重置",
+    footerText: "所有处理均在服务器端完成，请勿上传敏感图片。",
   },
 };
 
-/**
- * 根据语言返回文案
- */
 function useTexts(lang) {
   return texts[lang] || texts.en;
 }
 
 export default function App() {
-  // 当前语言：en / zh（默认英文）
+  // ========== 基本状态 ==========
   const [lang, setLang] = useState("en");
   const t = useTexts(lang);
 
-  // mode: "convert" | "ocr"
+  // 支持五个模式
+  const modes = ["convert", "ocr", "compress", "crop", "resize"];
   const [mode, setMode] = useState("convert");
 
-  // 业务状态
   const [file, setFile] = useState(null);
-  const [targetFormat, setTargetFormat] = useState("png");
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [history, setHistory] = useState([]);
   const [helper, setHelper] = useState("");
-  const [helperType, setHelperType] = useState("info"); // 'info' | 'error' | 'success'
+  const [helperType, setHelperType] = useState("info");
   const [loading, setLoading] = useState(false);
 
-  // -----------------------------
-  // ① 根据 URL path 决定初始模式
-  //    /convert -> convert
-  //    /ocr     -> ocr
-  //    其它路径 -> 重写为 /convert
-  // -----------------------------
+  const [history, setHistory] = useState([]);
+
+  // ========== 各模式独立参数 ==========
+  const [targetFormat, setTargetFormat] = useState("png");
+
+  const [compressPct, setCompressPct] = useState(80); // 压缩比例
+
+  const [cropX, setCropX] = useState(0);
+  const [cropY, setCropY] = useState(0);
+  const [cropW, setCropW] = useState(300);
+  const [cropH, setCropH] = useState(300);
+
+  const [resizeW, setResizeW] = useState(800);
+  const [resizeH, setResizeH] = useState(600);
+
+  // ========== URL 同步模式 ==========
   useEffect(() => {
-    const path = window.location.pathname || "/";
-    if (path.startsWith("/ocr")) {
-      setMode("ocr");
-    } else {
-      if (path !== "/convert") {
-        window.history.replaceState(null, "", "/convert");
-      }
+    const path = window.location.pathname.replace("/", "");
+    if (modes.includes(path)) setMode(path);
+    else {
+      window.history.replaceState(null, "", "/convert");
       setMode("convert");
     }
   }, []);
 
-  // ② 封装模式切换：同步修改 URL
-  const handleModeChange = useCallback((nextMode) => {
-    setMode(nextMode);
-    const nextPath = nextMode === "ocr" ? "/ocr" : "/convert";
-    if (window.location.pathname !== nextPath) {
-      window.history.replaceState(null, "", nextPath);
-    }
-  }, []);
+  const updateUrl = (m) => {
+    window.history.replaceState(null, "", `/${m}`);
+    setMode(m);
+  };
 
-  // -----------------------------
-  // 历史记录本地持久化
-  // -----------------------------
+  // ========== OCR 历史缓存 ==========
   useEffect(() => {
     try {
       const cached = localStorage.getItem("imageapp_ocr_history");
-      if (cached) {
-        const arr = JSON.parse(cached);
-        if (Array.isArray(arr)) setHistory(arr);
-      }
-    } catch (e) {
-      console.warn("Failed to load history from localStorage", e);
-    }
+      if (cached) setHistory(JSON.parse(cached));
+    } catch {}
   }, []);
 
   useEffect(() => {
@@ -152,160 +185,122 @@ export default function App() {
           "imageapp_ocr_history",
           JSON.stringify(history.slice(0, 200))
       );
-    } catch (e) {
-      console.warn("Failed to store history", e);
-    }
+    } catch {}
   }, [history]);
 
-  // ✅ 提供统一清空历史的方法，给 Reset 按钮使用
-  const handleResetHistory = useCallback(() => {
+  const clearHistory = () => {
     setHistory([]);
-    try {
-      localStorage.removeItem("imageapp_ocr_history");
-    } catch (e) {
-      console.warn("Failed to clear history from localStorage", e);
-    }
-  }, []);
+    localStorage.removeItem("imageapp_ocr_history");
+  };
 
-  // Google Ads 渲染
-  useEffect(() => {
-    try {
-      if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
-        window.adsbygoogle.push({});
-      }
-    } catch (e) {
-      // ignore
-    }
-  }, []);
+  // ========== 文件选择 ==========
+  const handleFileChange = (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setFile(f);
+    const url = URL.createObjectURL(f);
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(url);
+  };
 
-  /**
-   * 设置提示信息
-   */
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const f = e.dataTransfer.files?.[0];
+    if (!f) return;
+    setFile(f);
+    const url = URL.createObjectURL(f);
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(url);
+  };
+
+  // ========== 提示 ==========
   const showHelper = (msg, type = "info") => {
     setHelper(msg);
     setHelperType(type);
   };
 
-  /**
-   * 选择文件
-   */
-  const handleFileChange = useCallback((e) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setFile(f);
-    const url = URL.createObjectURL(f);
-    setPreviewUrl((old) => {
-      if (old) URL.revokeObjectURL(old);
-      return url;
-    });
-  }, []);
+  // ========== 主处理入口 ==========
+  const handleStart = async () => {
+    if (!file) {
+      showHelper(t.helperNoFile, "error");
+      return;
+    }
 
-  /**
-   * 拖拽上传
-   */
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const f = e.dataTransfer.files?.[0];
-    if (!f) return;
-    setFile(f);
-    const url = URL.createObjectURL(f);
-    setPreviewUrl((old) => {
-      if (old) URL.revokeObjectURL(old);
-      return url;
-    });
-  }, []);
+    const form = new FormData();
+    form.append("file", file);
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    try {
+      setLoading(true);
+
+      let data = null;
+
+      switch (mode) {
+        case "convert":
+          form.append("targetFormat", targetFormat);
+          showHelper(t.helperConverting);
+          data = await convertImage(form);
+          break;
+
+        case "ocr":
+          showHelper(t.helperOcring);
+          data = await ocrImage(form);
+          if (data.ocrText) {
+            setHistory((p) => [
+              { time: new Date().toLocaleString(), text: data.ocrText },
+              ...p,
+            ]);
+            showHelper(t.helperOcrSuccess, "success");
+          }
+          break;
+
+        case "compress":
+          form.append("quality", compressPct);
+          showHelper(t.helperConverting);
+          data = await compressImage(form);
+          break;
+
+        case "crop":
+          form.append("x", cropX);
+          form.append("y", cropY);
+          form.append("width", cropW);
+          form.append("height", cropH);
+          showHelper(t.helperConverting);
+          data = await cropImage(form);
+          break;
+
+        case "resize":
+          form.append("width", resizeW);
+          form.append("height", resizeH);
+          showHelper(t.helperConverting);
+          data = await resizeImage(form);
+          break;
+      }
+
+      // 下载处理
+      if (data?.base64 && data?.filename) {
+        const a = document.createElement("a");
+        a.href = `data:${data.contentType};base64,${data.base64}`;
+        a.download = data.filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        showHelper(t.helperSuccess, "success");
+      }
+
+    } catch (e) {
+      showHelper(t.helperErrorPrefix + e.message, "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  /**
-   * 点击开始处理
-   */
-  const handleSubmit = useCallback(
-      async () => {
-        if (!file) {
-          showHelper(t.helperNoFile, "error");
-          return;
-        }
-
-        const form = new FormData();
-        form.append("file", file);
-
-        try {
-          setLoading(true);
-
-          // ---------- 格式转换模式 ----------
-          if (mode === "convert") {
-            form.append("targetFormat", targetFormat);
-            showHelper(t.helperConverting, "info");
-
-            const data = await convertImage(form); // 调用 /api/image/convert
-
-            if (!data || data.success === false) {
-              showHelper(
-                  t.helperErrorPrefix + (data?.message || "Convert failed"),
-                  "error"
-              );
-              return;
-            }
-
-            if (data.base64 && data.filename) {
-              const a = document.createElement("a");
-              a.href = `data:${
-                  data.contentType || "application/octet-stream"
-              };base64,${data.base64}`;
-              a.download = data.filename;
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-            }
-            showHelper(t.helperSuccess, "success");
-            return;
-          }
-
-          // ---------- OCR 模式 ----------
-          if (mode === "ocr") {
-            showHelper(t.helperOcring, "info");
-
-            const data = await ocrImage(form); // 调用 /api/image/ocr
-
-            if (!data || data.success === false) {
-              showHelper(
-                  t.helperErrorPrefix + (data?.message || "OCR failed"),
-                  "error"
-              );
-              return;
-            }
-
-            if (data.ocrText) {
-              setHistory((prev) => [
-                { time: new Date().toLocaleString(), text: data.ocrText },
-                ...prev,
-              ]);
-              showHelper(t.helperOcrSuccess, "success");
-            } else {
-              showHelper(t.helperErrorPrefix + "empty OCR result", "error");
-            }
-          }
-        } catch (e) {
-          console.error(e);
-          showHelper(
-              t.helperErrorPrefix + (e.message || "Unknown error"),
-              "error"
-          );
-        } finally {
-          setLoading(false);
-        }
-      },
-      [file, targetFormat, mode, t] // 这里依赖文案和模式即可
-  );
+  // ==========================================================
+  // ======================= UI 渲染 ===========================
+  // ==========================================================
 
   return (
       <div className="app-shell">
-        {/* 顶部导航栏 */}
+        {/* 顶部 */}
         <header className="app-header">
           <div className="app-header-inner">
             <div className="brand">
@@ -319,14 +314,12 @@ export default function App() {
             {/* 语言切换 */}
             <div className="lang-switch">
               <button
-                  type="button"
                   className={lang === "en" ? "lang-btn lang-btn-active" : "lang-btn"}
                   onClick={() => setLang("en")}
               >
                 EN
               </button>
               <button
-                  type="button"
                   className={lang === "zh" ? "lang-btn lang-btn-active" : "lang-btn"}
                   onClick={() => setLang("zh")}
               >
@@ -334,27 +327,15 @@ export default function App() {
               </button>
             </div>
           </div>
-
-          {/* 顶部广告位 */}
-          <div className="header-ad">
-            <ins
-                className="adsbygoogle"
-                style={{ display: "block" }}
-                data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                data-ad-slot="1234567890"
-                data-ad-format="auto"
-                data-full-width-responsive="true"
-            ></ins>
-          </div>
         </header>
 
-        {/* 主体内容 */}
+        {/* 主内容 */}
         <main className="app-main">
           <h1 className="page-title">{t.title}</h1>
           <p className="page-subtitle">{t.subtitle}</p>
 
           <div className="main-grid">
-            {/* 左侧：上传 + 模式 */}
+            {/* 左侧操作面板 */}
             <section className="card">
               <div className="card-header">
                 <div>
@@ -363,20 +344,37 @@ export default function App() {
                 </div>
               </div>
 
-              {/* 模式 Tab：路径联动 */}
-              <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+              {/* 5 大模式 Tab（与 URL 同步） */}
+              <div className="mode-tabs">
                 <button
                     className={mode === "convert" ? "tab-active" : "tab"}
-                    onClick={() => handleModeChange("convert")}
+                    onClick={() => updateUrl("convert")}
                 >
                   {t.convertTab}
                 </button>
-
                 <button
                     className={mode === "ocr" ? "tab-active" : "tab"}
-                    onClick={() => handleModeChange("ocr")}
+                    onClick={() => updateUrl("ocr")}
                 >
                   {t.ocrTab}
+                </button>
+                <button
+                    className={mode === "compress" ? "tab-active" : "tab"}
+                    onClick={() => updateUrl("compress")}
+                >
+                  {t.compressTab}
+                </button>
+                <button
+                    className={mode === "crop" ? "tab-active" : "tab"}
+                    onClick={() => updateUrl("crop")}
+                >
+                  {t.cropTab}
+                </button>
+                <button
+                    className={mode === "resize" ? "tab-active" : "tab"}
+                    onClick={() => updateUrl("resize")}
+                >
+                  {t.resizeTab}
                 </button>
               </div>
 
@@ -384,7 +382,7 @@ export default function App() {
               <label
                   className="upload-area"
                   onDrop={handleDrop}
-                  onDragOver={handleDragOver}
+                  onDragOver={(e) => e.preventDefault()}
               >
                 <div className="upload-icon">↑</div>
                 <div style={{ flex: 1 }}>
@@ -395,15 +393,16 @@ export default function App() {
                 <input type="file" accept="image/*" onChange={handleFileChange} />
               </label>
 
-              {/* 选中文件预览 */}
+              {/* 文件预览 */}
               {previewUrl && (
                   <div className="preview-wrapper">
-                    <div className="preview-label">{file ? file.name : ""}</div>
-                    <img src={previewUrl} alt="preview" className="preview-image" />
+                    <div className="preview-label">{file?.name}</div>
+                    <img src={previewUrl} className="preview-image" />
                   </div>
               )}
 
-              {/* 仅在“格式转换模式”下显示目标格式 */}
+              {/* 根据模式显示不同工具面板 */}
+              {/* ------------------- Convert ------------------- */}
               {mode === "convert" && (
                   <div className="form-row">
                     <div className="field">
@@ -413,7 +412,6 @@ export default function App() {
                           value={targetFormat}
                           onChange={(e) => setTargetFormat(e.target.value)}
                       >
-                        {/* value 要和后端支持列表严格一致 */}
                         <option value="png">PNG</option>
                         <option value="jpg">JPEG</option>
                         <option value="webp">WebP</option>
@@ -425,7 +423,83 @@ export default function App() {
                   </div>
               )}
 
-              {/* 状态提示 */}
+              {/* ------------------- Compress ------------------- */}
+              {mode === "compress" && (
+                  <div className="form-row">
+                    <div className="field">
+                      <div className="preview-label">{t.compressLabel}</div>
+                      <input
+                          type="range"
+                          min="20"
+                          max="100"
+                          value={compressPct}
+                          onChange={(e) => setCompressPct(e.target.value)}
+                          className="input"
+                      />
+                      <div style={{ fontSize: 12, opacity: 0.7 }}>
+                        {compressPct}%
+                      </div>
+                    </div>
+                  </div>
+              )}
+
+              {/* ------------------- Crop ------------------- */}
+              {mode === "crop" && (
+                  <div className="form-row" style={{ flexDirection: "column" }}>
+                    <div className="preview-label">{t.cropLabel}</div>
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <input
+                          className="input"
+                          placeholder={t.cropX}
+                          value={cropX}
+                          onChange={(e) => setCropX(e.target.value)}
+                      />
+                      <input
+                          className="input"
+                          placeholder={t.cropY}
+                          value={cropY}
+                          onChange={(e) => setCropY(e.target.value)}
+                      />
+                    </div>
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <input
+                          className="input"
+                          placeholder={t.cropW}
+                          value={cropW}
+                          onChange={(e) => setCropW(e.target.value)}
+                      />
+                      <input
+                          className="input"
+                          placeholder={t.cropH}
+                          value={cropH}
+                          onChange={(e) => setCropH(e.target.value)}
+                      />
+                    </div>
+                  </div>
+              )}
+
+              {/* ------------------- Resize ------------------- */}
+              {mode === "resize" && (
+                  <div className="form-row" style={{ flexDirection: "column" }}>
+                    <div className="preview-label">{t.resizeLabel}</div>
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <input
+                          className="input"
+                          placeholder={t.resizeW}
+                          value={resizeW}
+                          onChange={(e) => setResizeW(e.target.value)}
+                      />
+                      <input
+                          className="input"
+                          placeholder={t.resizeH}
+                          value={resizeH}
+                          onChange={(e) => setResizeH(e.target.value)}
+                      />
+                    </div>
+                  </div>
+              )}
+
+              {/* 提示 */}
               {helper && (
                   <div
                       className={
@@ -442,54 +516,39 @@ export default function App() {
               )}
 
               {/* 操作按钮 */}
-              <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
-                <button
-                    type="button"
-                    className="btn"
-                    style={{ flex: 1 }}
-                    onClick={handleSubmit}
-                    disabled={loading}
-                >
-                  {loading ? "..." : t.btnConvert}
+              <div className="action-row">
+                <button className="btn" onClick={handleStart} disabled={loading}>
+                  {loading ? "…" : t.btnStart}
                 </button>
                 <button
-                    type="button"
                     className="btn btn-ghost"
                     onClick={() => {
                       setFile(null);
-                      if (previewUrl) URL.revokeObjectURL(previewUrl);
+                      previewUrl && URL.revokeObjectURL(previewUrl);
                       setPreviewUrl(null);
                     }}
                 >
-                  ✕
+                  {t.btnClear}
                 </button>
               </div>
             </section>
 
-            {/* 右侧：历史记录（带 Reset） */}
-            <HistoryPanel
-                history={history}
-                lang={lang}
-                t={t}
-                onReset={handleResetHistory}
-            />
+            {/* 右侧：历史记录（只在 OCR 模式显示） */}
+            {mode === "ocr" && (
+                <HistoryPanel
+                    history={history}
+                    lang={lang}
+                    t={t}
+                    onReset={clearHistory}
+                />
+            )}
           </div>
         </main>
 
-        {/* 底部 Footer + 广告位 */}
+        {/* 底部 */}
         <footer className="app-footer">
           <div className="app-footer-inner">
             <div className="footer-text">{t.footerText}</div>
-            <div className="footer-ad">
-              <ins
-                  className="adsbygoogle"
-                  style={{ display: "block" }}
-                  data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                  data-ad-slot="9876543210"
-                  data-ad-format="auto"
-                  data-full-width-responsive="true"
-              ></ins>
-            </div>
           </div>
         </footer>
       </div>

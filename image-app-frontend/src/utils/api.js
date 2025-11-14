@@ -1,54 +1,39 @@
 /**
  * @Author:XYH
  * @Date:2025-11-14
- * @Description: 前端 API 封装模块 —— 支持图片格式转换与 OCR 独立接口
+ * @Description: 后端 API 封装模块：格式转换 / OCR / 压缩 / 裁剪 / 调整尺寸
  */
-
-// =============================
-// 读取后端基础地址
-// =============================
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://ocr.api.xyh.wiki";
 
-// =============================
-// 图片格式转换接口（/convert）
-// =============================
-/**
- * 调用后端图片格式转换接口
- * @param {FormData} formData 仅包含 file、targetFormat
- * @returns {Promise<object>}
- */
-export async function convertImage(formData) {
-  const resp = await fetch(`${BASE_URL}/api/image/convert`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!resp.ok) {
-    const text = await resp.text().catch(() => "");
-    throw new Error(`HTTP ${resp.status}: ${text || "Convert failed"}`);
-  }
-
-  return resp.json();
+/** 通用请求函数 */
+async function fetchPost(url, formData) {
+  const resp = await fetch(url, { method: "POST", body: formData });
+  const text = await resp.text();
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${text}`);
+  return JSON.parse(text);
 }
 
-// =============================
-// OCR 识别接口（/ocr）
-// =============================
-/**
- * 调用后端 OCR 识别接口
- * @param {FormData} formData 仅包含 file
- * @returns {Promise<object>}
- */
-export async function ocrImage(formData) {
-  const resp = await fetch(`${BASE_URL}/api/image/ocr`, {
-    method: "POST",
-    body: formData,
-  });
+/** 格式转换 */
+export function convertImage(form) {
+  return fetchPost(`${BASE_URL}/api/image/convert`, form);
+}
 
-  if (!resp.ok) {
-    const text = await resp.text().catch(() => "");
-    throw new Error(`HTTP ${resp.status}: ${text || "OCR failed"}`);
-  }
+/** OCR */
+export function ocrImage(form) {
+  return fetchPost(`${BASE_URL}/api/image/ocr`, form);
+}
 
-  return resp.json();
+/** 图片压缩 */
+export function compressImage(form) {
+  return fetchPost(`${BASE_URL}/api/image/compress`, form);
+}
+
+/** 图片裁剪 */
+export function cropImage(form) {
+  return fetchPost(`${BASE_URL}/api/image/crop`, form);
+}
+
+/** 调整尺寸 */
+export function resizeImage(form) {
+  return fetchPost(`${BASE_URL}/api/image/resize`, form);
 }

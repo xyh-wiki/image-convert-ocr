@@ -2,6 +2,7 @@ package com.xyh.imageapp.controller;
 
 import com.xyh.imageapp.service.ImageConvertService;
 import com.xyh.imageapp.service.OcrSpaceService;
+import com.xyh.imageapp.service.ImageEditService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -32,16 +33,20 @@ public class ImageController {
     private final ImageConvertService convertService;
     /** OCR 识别服务 */
     private final OcrSpaceService ocrService;
+    /** 图片编辑服务：压缩 / 裁剪 / 调整尺寸 */
+    private final ImageEditService editService;
 
     /**
      * 构造方法注入 Service
      *
      * @param convertService 图片格式转换服务
      * @param ocrService     OCR 识别服务
+     * @param editService    图片编辑服务
      */
-    public ImageController(ImageConvertService convertService, OcrSpaceService ocrService) {
+    public ImageController(ImageConvertService convertService, OcrSpaceService ocrService, ImageEditService editService) {
         this.convertService = convertService;
         this.ocrService = ocrService;
+        this.editService = editService;
     }
 
     /**
@@ -237,6 +242,88 @@ public class ImageController {
         } catch (Exception e) {
             log.error("OCR error", e);
             return buildError("Internal OCR error", 500);
+        }
+    }
+
+    // =========================================================
+    // 3. 图片压缩（compress）
+    // =========================================================
+    @PostMapping("/compress")
+    public ResponseEntity<Map<String, Object>> compress(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam("quality") double quality) {
+
+        if (file == null || file.isEmpty()) {
+            return buildError("File is empty", 400);
+        }
+        try {
+            byte[] bytes = editService.compress(file, quality);
+
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("success", true);
+            resp.put("filename", "compressed.png");
+            resp.put("contentType", "image/png");
+            resp.put("base64", java.util.Base64.getEncoder().encodeToString(bytes));
+
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            return buildError("Compress failed: " + e.getMessage(), 500);
+        }
+    }
+
+    // =========================================================
+    // 4. 图片裁剪（crop）
+    // =========================================================
+    @PostMapping("/crop")
+    public ResponseEntity<Map<String, Object>> crop(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam int x,
+            @RequestParam int y,
+            @RequestParam int width,
+            @RequestParam int height) {
+
+        if (file == null || file.isEmpty()) {
+            return buildError("File is empty", 400);
+        }
+        try {
+            byte[] bytes = editService.crop(file, x, y, width, height);
+
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("success", true);
+            resp.put("filename", "cropped.png");
+            resp.put("contentType", "image/png");
+            resp.put("base64", java.util.Base64.getEncoder().encodeToString(bytes));
+
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            return buildError("Crop failed: " + e.getMessage(), 500);
+        }
+    }
+
+    // =========================================================
+    // 5. 图片尺寸调整（resize）
+    // =========================================================
+    @PostMapping("/resize")
+    public ResponseEntity<Map<String, Object>> resize(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam int width,
+            @RequestParam int height) {
+
+        if (file == null || file.isEmpty()) {
+            return buildError("File is empty", 400);
+        }
+        try {
+            byte[] bytes = editService.resize(file, width, height);
+
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("success", true);
+            resp.put("filename", "resized.png");
+            resp.put("contentType", "image/png");
+            resp.put("base64", java.util.Base64.getEncoder().encodeToString(bytes));
+
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            return buildError("Resize failed: " + e.getMessage(), 500);
         }
     }
 }
