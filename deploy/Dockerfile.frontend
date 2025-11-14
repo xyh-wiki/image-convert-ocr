@@ -45,7 +45,4 @@ COPY deploy/ads.txt /usr/share/nginx/html/ads.txt
 # Nginx 暴露 80 端口
 EXPOSE 80
 
-# 健康检查：简单访问首页
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-  CMD wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1
-
+# ⚠️ 不再配置 HEALTHCHECK，健康检查交给 Dokploy/Traefik 或干脆不检查
