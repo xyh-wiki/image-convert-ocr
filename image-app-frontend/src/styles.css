@@ -196,34 +196,47 @@ body {
 
 /* ================== 5 个工具模块按钮 ================== */
 
-.mode-tabs {
-  margin-top: 8px;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-}
+  .mode-tabs {
+    margin-top: 14px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      rgba(15, 23, 42, 0.98),
+      rgba(30, 64, 175, 0.96)
+    );
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
 
-.tool-btn {
-  position: relative;
-  border-radius: 14px;
-  padding: 10px 10px;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.65), #020617);
-  color: var(--text-sub);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition:
-          border-color 0.18s ease,
-          box-shadow 0.18s ease,
-          transform 0.12s ease,
-          background 0.18s ease,
-          color 0.18s ease;
-}
+  .tool-btn {
+    position: relative;
+    flex: 1 1 0;
+    border-radius: 999px;
+    padding: 10px 16px;
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    background: radial-gradient(
+      circle at top left,
+      rgba(30, 64, 175, 0.9),
+      rgba(15, 23, 42, 0.98)
+    );
+    color: var(--text-sub);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.12s ease,
+      background 0.18s ease,
+      color 0.18s ease;
+    white-space: nowrap;
+  }
 
 .tool-btn::before {
   content: "";
@@ -250,14 +263,14 @@ body {
   opacity: 1;
 }
 
-.tool-btn-active {
-  background: var(--accent-gradient);
-  color: #f9fafb;
-  border-color: rgba(191, 219, 254, 0.95);
-  box-shadow:
-          0 12px 30px rgba(129, 140, 248, 0.6),
-          0 0 0 1px rgba(191, 219, 254, 0.4);
-}
+  .tool-btn-active {
+    background: var(--accent-gradient);
+    color: #0b1120;
+    border-color: rgba(191, 219, 254, 0.95);
+    box-shadow:
+      0 10px 26px rgba(129, 140, 248, 0.65),
+      0 0 0 1px rgba(191, 219, 254, 0.55);
+  }
 
 /* ================== 上传区域 ================== */
 
@@ -534,7 +547,16 @@ input[type="range"].input::-webkit-slider-thumb {
     min-height: auto;
   }
   .mode-tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 6px 8px;
+    gap: 8px;
+    overflow-x: auto;
+  }
+  .mode-tabs::-webkit-scrollbar {
+    height: 4px;
+  }
+  .mode-tabs::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.7);
+    border-radius: 999px;
   }
   .bottom-ads-inner {
     grid-template-columns: minmax(0, 1fr);
