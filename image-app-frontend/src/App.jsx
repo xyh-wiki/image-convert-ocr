@@ -80,12 +80,15 @@ const texts = {
   },
 };
 
+/**
+ * 根据语言返回文案
+ */
 function useTexts(lang) {
   return texts[lang] || texts.en;
 }
 
 export default function App() {
-  // 当前语言：en / zh
+  // 当前语言：en / zh（默认英文）
   const [lang, setLang] = useState("en");
   const t = useTexts(lang);
 
@@ -98,21 +101,20 @@ export default function App() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [history, setHistory] = useState([]);
   const [helper, setHelper] = useState("");
-  const [helperType, setHelperType] = useState("info");
+  const [helperType, setHelperType] = useState("info"); // 'info' | 'error' | 'success'
   const [loading, setLoading] = useState(false);
 
   // -----------------------------
   // ① 根据 URL path 决定初始模式
   //    /convert -> convert
   //    /ocr     -> ocr
-  //    /       -> 重写为 /convert
+  //    其它路径 -> 重写为 /convert
   // -----------------------------
   useEffect(() => {
     const path = window.location.pathname || "/";
     if (path.startsWith("/ocr")) {
       setMode("ocr");
     } else {
-      // 默认跳到 /convert
       if (path !== "/convert") {
         window.history.replaceState(null, "", "/convert");
       }
@@ -120,14 +122,14 @@ export default function App() {
     }
   }, []);
 
-  // ② 封装切换模式时同步修改 URL 的函数
-  const handleModeChange = (nextMode) => {
+  // ② 封装模式切换：同步修改 URL
+  const handleModeChange = useCallback((nextMode) => {
     setMode(nextMode);
     const nextPath = nextMode === "ocr" ? "/ocr" : "/convert";
     if (window.location.pathname !== nextPath) {
       window.history.replaceState(null, "", nextPath);
     }
-  };
+  }, []);
 
   // -----------------------------
   // 历史记录本地持久化
@@ -155,6 +157,16 @@ export default function App() {
     }
   }, [history]);
 
+  // ✅ 提供统一清空历史的方法，给 Reset 按钮使用
+  const handleResetHistory = useCallback(() => {
+    setHistory([]);
+    try {
+      localStorage.removeItem("imageapp_ocr_history");
+    } catch (e) {
+      console.warn("Failed to clear history from localStorage", e);
+    }
+  }, []);
+
   // Google Ads 渲染
   useEffect(() => {
     try {
@@ -166,13 +178,18 @@ export default function App() {
     }
   }, []);
 
+  /**
+   * 设置提示信息
+   */
   const showHelper = (msg, type = "info") => {
     setHelper(msg);
     setHelperType(type);
   };
 
-  // 文件选择
-  const handleFileChange = (e) => {
+  /**
+   * 选择文件
+   */
+  const handleFileChange = useCallback((e) => {
     const f = e.target.files?.[0];
     if (!f) return;
     setFile(f);
@@ -181,10 +198,12 @@ export default function App() {
       if (old) URL.revokeObjectURL(old);
       return url;
     });
-  };
+  }, []);
 
-  // 拖拽上传
-  const handleDrop = (e) => {
+  /**
+   * 拖拽上传
+   */
+  const handleDrop = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     const f = e.dataTransfer.files?.[0];
@@ -195,89 +214,94 @@ export default function App() {
       if (old) URL.revokeObjectURL(old);
       return url;
     });
-  };
+  }, []);
 
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  // 点击开始处理
-  const handleSubmit = useCallback(async () => {
-    if (!file) {
-      showHelper(t.helperNoFile, "error");
-      return;
-    }
-
-    const form = new FormData();
-    form.append("file", file);
-
-    try {
-      setLoading(true);
-
-      // ---------- 格式转换模式 ----------
-      if (mode === "convert") {
-        form.append("targetFormat", targetFormat);
-        showHelper(t.helperConverting, "info");
-
-        const data = await convertImage(form); // 调用 /api/image/convert
-
-        if (!data || data.success === false) {
-          showHelper(
-              t.helperErrorPrefix + (data?.message || "Convert failed"),
-              "error"
-          );
+  /**
+   * 点击开始处理
+   */
+  const handleSubmit = useCallback(
+      async () => {
+        if (!file) {
+          showHelper(t.helperNoFile, "error");
           return;
         }
 
-        if (data.base64 && data.filename) {
-          const a = document.createElement("a");
-          a.href = `data:${
-              data.contentType || "application/octet-stream"
-          };base64,${data.base64}`;
-          a.download = data.filename;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        }
-        showHelper(t.helperSuccess, "success");
-        return;
-      }
+        const form = new FormData();
+        form.append("file", file);
 
-      // ---------- OCR 模式 ----------
-      if (mode === "ocr") {
-        showHelper(t.helperOcring, "info");
+        try {
+          setLoading(true);
 
-        const data = await ocrImage(form); // 调用 /api/image/ocr
+          // ---------- 格式转换模式 ----------
+          if (mode === "convert") {
+            form.append("targetFormat", targetFormat);
+            showHelper(t.helperConverting, "info");
 
-        if (!data || data.success === false) {
+            const data = await convertImage(form); // 调用 /api/image/convert
+
+            if (!data || data.success === false) {
+              showHelper(
+                  t.helperErrorPrefix + (data?.message || "Convert failed"),
+                  "error"
+              );
+              return;
+            }
+
+            if (data.base64 && data.filename) {
+              const a = document.createElement("a");
+              a.href = `data:${
+                  data.contentType || "application/octet-stream"
+              };base64,${data.base64}`;
+              a.download = data.filename;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            }
+            showHelper(t.helperSuccess, "success");
+            return;
+          }
+
+          // ---------- OCR 模式 ----------
+          if (mode === "ocr") {
+            showHelper(t.helperOcring, "info");
+
+            const data = await ocrImage(form); // 调用 /api/image/ocr
+
+            if (!data || data.success === false) {
+              showHelper(
+                  t.helperErrorPrefix + (data?.message || "OCR failed"),
+                  "error"
+              );
+              return;
+            }
+
+            if (data.ocrText) {
+              setHistory((prev) => [
+                { time: new Date().toLocaleString(), text: data.ocrText },
+                ...prev,
+              ]);
+              showHelper(t.helperOcrSuccess, "success");
+            } else {
+              showHelper(t.helperErrorPrefix + "empty OCR result", "error");
+            }
+          }
+        } catch (e) {
+          console.error(e);
           showHelper(
-              t.helperErrorPrefix + (data?.message || "OCR failed"),
+              t.helperErrorPrefix + (e.message || "Unknown error"),
               "error"
           );
-          return;
+        } finally {
+          setLoading(false);
         }
-
-        if (data.ocrText) {
-          setHistory((prev) => [
-            { time: new Date().toLocaleString(), text: data.ocrText },
-            ...prev,
-          ]);
-          showHelper(t.helperOcrSuccess, "success");
-        } else {
-          showHelper(t.helperErrorPrefix + "empty OCR result", "error");
-        }
-      }
-    } catch (e) {
-      console.error(e);
-      showHelper(
-          t.helperErrorPrefix + (e.message || "Unknown error"),
-          "error"
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [file, targetFormat, mode, t]);
+      },
+      [file, targetFormat, mode, t] // 这里依赖文案和模式即可
+  );
 
   return (
       <div className="app-shell">
@@ -389,9 +413,9 @@ export default function App() {
                           value={targetFormat}
                           onChange={(e) => setTargetFormat(e.target.value)}
                       >
-                        {/* 这里的 value 要和后端支持列表严格一致 */}
+                        {/* value 要和后端支持列表严格一致 */}
                         <option value="png">PNG</option>
-                        <option value="jpg">JPEG</option>   {/* ← 改成 jpg */}
+                        <option value="jpg">JPEG</option>
                         <option value="webp">WebP</option>
                         <option value="bmp">BMP</option>
                         <option value="gif">GIF</option>
@@ -442,8 +466,13 @@ export default function App() {
               </div>
             </section>
 
-            {/* 右侧：历史记录 */}
-            <HistoryPanel history={history} lang={lang} t={t} />
+            {/* 右侧：历史记录（带 Reset） */}
+            <HistoryPanel
+                history={history}
+                lang={lang}
+                t={t}
+                onReset={handleResetHistory}
+            />
           </div>
         </main>
 
