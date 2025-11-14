@@ -73,8 +73,15 @@ button {
   padding: 14px 0 8px;
 }
 
-.app-header-inner,
-
+.app-header-inner {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 /* Logo 与文字 */
 .brand {
@@ -136,13 +143,22 @@ button {
 }
 
 /* 顶部广告位（弱化显示） */
-.header-ad,
+.header-ad {
+  width: 100%;
+  max-width: 1400px;
+  margin: 8px auto 0;
+  padding: 0 24px 8px;
+}
 
 /* =============================
  * 主体画布区域
  * ============================= */
-
-.app-main,
+.app-main {
+  width: 100%;
+  max-width: 1400px;
+  margin: 18px auto 24px;
+  padding: 0 24px 24px;
+}
 
 /* 标题区域 */
 .page-title {
@@ -224,10 +240,9 @@ button {
   grid-template-columns: 1fr;
   width: 100%;
   gap: 24px;
-  margin-top: 18px;
   align-items: stretch;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 18px auto 0;
 }
 
 /* 小屏单列 */
