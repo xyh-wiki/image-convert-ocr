@@ -47,8 +47,7 @@ body {
 body {
   margin: 0;
   padding: 0;
-  background:
-          radial-gradient(circle at top left, #1f2937 0%, #020617 40%, #020617 100%);
+  background: linear-gradient(135deg, #f0f7ff, #c9e5ff);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text-main);
 }
@@ -167,7 +166,7 @@ button {
 .tool-tabs {
   margin-top: 10px;
   margin-bottom: 18px;
-  padding: 10px;
+  padding: 20px;
   border-radius: 20px;
   background: radial-gradient(circle at top left, #020617 0%, #020617 65%, #020617 100%);
   border: 1px solid var(--border-soft);
@@ -175,19 +174,19 @@ button {
           0 20px 60px rgba(15, 23, 42, 0.95),
           0 0 0 1px rgba(15, 23, 42, 0.9);
   display: grid;
-  grid-template-columns: repeat(5, minmax(120px, 1fr));  /* 五个模块铺开 */
-  gap: 8px;
+  grid-template-columns: repeat(5, minmax(160px, 1fr));  /* 五个模块铺开 */
+  gap: 16px;
 }
 
 /* 大胶囊按钮，每个代表一个工具模块 */
 .tool-tab {
-  border-radius: 999px;
-  border: 1px solid rgba(75, 85, 99, 0.9);
-  padding: 9px 18px;
+  border-radius: 10px;
+  border: 1px solid #d0d7de;
+  padding: 18px;
   font-size: 13px;
   cursor: pointer;
-  background: radial-gradient(circle at top left, #020617, #020617);
-  color: var(--text-sub);
+  background: #ffffff;
+  color: #1e2a37;
   font-weight: 500;
   text-align: center;
   transition:
@@ -207,8 +206,8 @@ button {
 
 /* 激活状态：颜色更亮，突出当前功能模块 */
 .tool-tab.active {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: #f9fafb;
+  background: linear-gradient(135deg, #4ea5ff, #1b78ff);
+  color: #ffffff;
   border-color: rgba(56, 189, 248, 0.95);
   box-shadow:
           0 18px 40px rgba(56, 189, 248, 0.85),
@@ -222,7 +221,8 @@ button {
 
 .main-grid {
   display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);  /* 左 3/5 右 2/5 */
+  grid-template-columns: 1fr;
+  width: 100%;
   gap: 24px;
   margin-top: 18px;
   align-items: stretch;
@@ -237,9 +237,9 @@ button {
 
 /* 通用卡片样式 */
 .card {
-  background: radial-gradient(circle at top left, #0b1120 0%, #020617 60%, #020617 100%);
+  background: linear-gradient(135deg, #ffffff, #eef6ff);
   border-radius: var(--radius);
-  border: 1px solid var(--border-soft);
+  border: 1px solid #d0e2ff;
   box-shadow:
           0 28px 90px rgba(15, 23, 42, 0.96),
           0 0 0 1px rgba(15, 23, 42, 0.9);
@@ -250,7 +250,7 @@ button {
 .card-main {
   display: flex;
   flex-direction: column;
-  min-height: 66vh;  /* 大约占屏幕 2/3 高度 */
+  min-height: 80vh;  /* 大约占屏幕 2/3 高度 */
 }
 .card-header {
   display: flex;
@@ -484,93 +484,6 @@ input[type="file"] {
 
 .helper-text-success {
   color: #4ade80;
-}
-
-/* =============================
- * 历史记录 + 分页
- * ============================= */
-
-/* 历史记录卡片高度同步 */
-
-.history {
-  max-height: none;
-  display: flex;
-  flex-direction: column;
-  min-height: 66vh;  /* 跟左侧保持一致，整个画布看起来就是铺满上部 2/3 */
-}
-
-.history-list {
-  margin-top: 10px;
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.history-item {
-  border-radius: var(--radius);
-  border-left: 3px solid var(--accent);
-  padding: 8px 10px;
-  margin-bottom: 8px;
-  background: radial-gradient(circle at top left, #020617, #020617);
-}
-
-.history-time {
-  font-size: 11px;
-  color: var(--text-sub);
-  margin-bottom: 4px;
-}
-
-.history-text {
-  font-size: 13px;
-  white-space: pre-wrap;
-  color: #e5e7eb;
-}
-
-/* 分页 */
-.pagination {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-
-.pagination-info {
-  font-size: 12px;
-  color: var(--text-sub);
-}
-
-.pagination-btn {
-  min-width: 26px;
-  height: 26px;
-  padding: 0 6px;
-  border-radius: 999px;
-  border: 1px solid rgba(75, 85, 99, 0.9);
-  background: #020617;
-  font-size: 12px;
-  cursor: pointer;
-  color: var(--text-sub);
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.pagination-btn.active {
-  background: var(--primary);
-  color: #ffffff;
-  border-color: var(--accent);
-}
-
-.pagination-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-/* 滚动条美化（桌面浏览器） */
-.history-list::-webkit-scrollbar {
-  width: 6px;
-}
-.history-list::-webkit-scrollbar-thumb {
-  background-color: #4b5563;
-  border-radius: 999px;
 }
 
 /* =============================
