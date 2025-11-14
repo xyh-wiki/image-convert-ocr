@@ -1,0 +1,5 @@
+html,body,#root{height:100%}body{margin:0;background:#0a0a0a;color:#e5e7eb;font-family:system-ui,Segoe UI,Roboto}
+.card{border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px}
+.btn{border:1px solid rgba(99,102,241,.6);background:rgba(99,102,241,.1);color:#e5e7eb;padding:10px 12px;border-radius:12px;cursor:pointer}
+.btn:hover{background:rgba(99,102,241,.2)}
+.select, .input{background:#0f0f10;color:#e5e7eb;border:1px solid rgba(255,255,255,.1);padding:8px;border-radius:12px;width:100%}

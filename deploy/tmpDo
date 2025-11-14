@@ -1,0 +1,23 @@
+# Author:XYH Date:2025-11-13 Description: Spring Boot 后端多阶段构建（仅构建 image-app-backend 模块）
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
+WORKDIR /app
+
+COPY . .
+
+# 显式使用 spring-boot-maven-plugin 的完整坐标执行 repackage，100% 不依赖前缀解析
+RUN mvn -q -DskipTests -pl image-app-backend -am clean package \
+    org.springframework.boot:spring-boot-maven-plugin:3.2.7:repackage
+
+FROM eclipse-temurin:17-jre
+WORKDIR /opt/app
+
+COPY --from=builder /app/image-app-backend/target/*.jar app.jar
+
+ENV SERVER_PORT=8080
+ENV JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75 -Dfile.encoding=UTF-8"
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD curl -fsS http://localhost:8080/actuator/health || exit 1
+
+ENTRYPOINT ["/bin/sh","-lc","java $JAVA_OPTS -jar app.jar"]

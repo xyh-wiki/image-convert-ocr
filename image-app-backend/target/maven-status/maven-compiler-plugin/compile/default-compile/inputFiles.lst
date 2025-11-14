@@ -1,0 +1,5 @@
+/data/apps/image-convert-ocr/image-convert-ocr-parent/image-app-backend/src/main/java/com/xyh/imageapp/service/OcrSpaceService.java
+/data/apps/image-convert-ocr/image-convert-ocr-parent/image-app-backend/src/main/java/com/xyh/imageapp/controller/ImageController.java
+/data/apps/image-convert-ocr/image-convert-ocr-parent/image-app-backend/src/main/java/com/xyh/imageapp/config/OcrProperties.java
+/data/apps/image-convert-ocr/image-convert-ocr-parent/image-app-backend/src/main/java/com/xyh/imageapp/service/ImageConvertService.java
+/data/apps/image-convert-ocr/image-convert-ocr-parent/image-app-backend/src/main/java/com/xyh/imageapp/ImageConvertOcrApplication.java

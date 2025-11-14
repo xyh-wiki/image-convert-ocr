@@ -1,0 +1,22 @@
+# Author:XYH Date:2025-11-14 Description: 使用本地已构建的 Spring Boot Jar 构建运行镜像
+FROM eclipse-temurin:17-jre
+
+# 设置工作目录
+WORKDIR /opt/app
+
+# 只复制已经在宿主机 target 目录中打包好的可执行 Jar
+# 注意：这里的路径是相对于 docker build 的上下文（父工程目录）
+COPY image-app-backend/target/image-app-backend-1.0.0.jar app.jar
+
+# 设置端口和 JVM 参数（按需可改）
+ENV SERVER_PORT=8080
+ENV JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75 -Dfile.encoding=UTF-8"
+
+EXPOSE 8080
+
+# 健康检查接口，供 Dokploy / Docker 检测容器是否存活
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD curl -fsS http://localhost:8080/actuator/health || exit 1
+
+# 容器启动命令：直接运行 Spring Boot 可执行 Jar
+ENTRYPOINT ["/bin/sh","-lc","java $JAVA_OPTS -jar app.jar"]

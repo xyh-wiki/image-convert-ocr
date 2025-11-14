@@ -1,0 +1,46 @@
+{
+  "groups": [
+    {
+      "name": "ocr.space",
+      "type": "com.xyh.imageapp.config.OcrProperties",
+      "sourceType": "com.xyh.imageapp.config.OcrProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "ocr.space.api-key",
+      "type": "java.lang.String",
+      "description": "ocr.space 的 API Key，建议以环境变量 OCR_SPACE_API_KEY 注入",
+      "sourceType": "com.xyh.imageapp.config.OcrProperties"
+    },
+    {
+      "name": "ocr.space.language",
+      "type": "java.lang.String",
+      "description": "语言代码：chs\/eng\/jpn\/kor 等",
+      "sourceType": "com.xyh.imageapp.config.OcrProperties",
+      "defaultValue": "chs"
+    },
+    {
+      "name": "ocr.space.scale",
+      "type": "java.lang.Boolean",
+      "description": "是否缩放以提升识别小字",
+      "sourceType": "com.xyh.imageapp.config.OcrProperties",
+      "defaultValue": true
+    },
+    {
+      "name": "ocr.space.table",
+      "type": "java.lang.Boolean",
+      "description": "是否表格模式",
+      "sourceType": "com.xyh.imageapp.config.OcrProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "ocr.space.url",
+      "type": "java.lang.String",
+      "description": "OCR 接口URL",
+      "sourceType": "com.xyh.imageapp.config.OcrProperties",
+      "defaultValue": "https:\/\/api.ocr.space\/parse\/image"
+    }
+  ],
+  "hints": []
+}
