@@ -1,20 +1,24 @@
 package com.xyh.imageapp.service;
 
-/**
- * @Author: XYH
- * @Date: 2025-11-12
- * @Description: 基于 OkHttp 的 ocr.space 访问封装，支持文件与URL识别
- */
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xyh.imageapp.config.OcrProperties;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 
+/**
+ * @Author: XYH
+ * @Date: 2025-11-12
+ * @Description: 稳定版 OCRSpace 调用封装（自动处理 403 / 无 API Key / OCRExitCode）
+ */
+@Slf4j
 @Service
 public class OcrSpaceService {
+
     private final OcrProperties props;
     private final OkHttpClient client = new OkHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -23,14 +27,27 @@ public class OcrSpaceService {
         this.props = props;
     }
 
+    /** 判断 API Key 是否有效 */
+    private boolean isApiKeyConfigured() {
+        String key = props.getApiKey();
+        if (key == null) return false;
+        key = key.trim();
+        return !key.isEmpty() && !key.equalsIgnoreCase("demo_key_replace_me");
+    }
+
     /**
-     * 通过文件进行OCR识别
-     * @param file 上传图片
-     * @return 纯文本
-     * @throws IOException 调用异常
+     * 文件 OCR
      */
     public String ocrByFile(MultipartFile file) throws IOException {
-        RequestBody fileBody = RequestBody.create(file.getBytes(), MediaType.parse("application/octet-stream"));
+        if (!isApiKeyConfigured()) {
+            throw new IllegalStateException("OCR API key not configured");
+        }
+
+        RequestBody fileBody = RequestBody.create(
+                file.getBytes(),
+                MediaType.parse("application/octet-stream")
+        );
+
         MultipartBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("language", props.getLanguage())
@@ -46,17 +63,17 @@ public class OcrSpaceService {
                 .post(requestBody)
                 .build();
 
-        try (Response resp = client.newCall(request).execute()) {
-            if (!resp.isSuccessful()) throw new IOException("OCR HTTP " + resp.code());
-            String json = resp.body().string();
-            return extractText(json);
-        }
+        return executeOcr(request);
     }
 
     /**
-     * 通过URL进行OCR识别
+     * URL OCR
      */
     public String ocrByUrl(String imageUrl) throws IOException {
+        if (!isApiKeyConfigured()) {
+            throw new IllegalStateException("OCR API key not configured");
+        }
+
         FormBody form = new FormBody.Builder()
                 .add("language", props.getLanguage())
                 .add("isOverlayRequired", "false")
@@ -71,21 +88,49 @@ public class OcrSpaceService {
                 .post(form)
                 .build();
 
+        return executeOcr(request);
+    }
+
+    /**
+     * OCR 执行与错误处理
+     */
+    private String executeOcr(Request request) throws IOException {
         try (Response resp = client.newCall(request).execute()) {
-            if (!resp.isSuccessful()) throw new IOException("OCR HTTP " + resp.code());
+
+            if (resp.code() == 403) {
+                throw new IllegalStateException("OCR request rejected (403): invalid API key");
+            }
+
+            if (!resp.isSuccessful()) {
+                throw new IOException("OCR HTTP " + resp.code());
+            }
+
             String json = resp.body().string();
-            return extractText(json);
+            JsonNode root = mapper.readTree(json);
+
+            // OCRExitCode 必须是 1 才表示成功
+            JsonNode exitCode = root.get("OCRExitCode");
+            if (exitCode != null && exitCode.asInt() != 1) {
+                String errorMsg = "";
+                if (root.has("ErrorMessage")) {
+                    errorMsg = root.get("ErrorMessage").toString();
+                }
+                throw new IllegalStateException("OCR failed: " + errorMsg);
+            }
+
+            return extractText(root);
         }
     }
 
-    /** 解析 ocr.space JSON */
-    private String extractText(String json) throws IOException {
-        JsonNode root = mapper.readTree(json);
+    /**
+     * 提取 OCR 文本
+     */
+    private String extractText(JsonNode root) {
         if (root.has("ParsedResults") && root.get("ParsedResults").isArray()) {
             StringBuilder sb = new StringBuilder();
             for (JsonNode r : root.get("ParsedResults")) {
-                String t = r.has("ParsedText") ? r.get("ParsedText").asText() : "";
-                if (t != null && !t.isEmpty()) sb.append(t).append("\n");
+                String t = r.path("ParsedText").asText("");
+                if (!t.isEmpty()) sb.append(t).append("\n");
             }
             return sb.toString().trim();
         }

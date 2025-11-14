@@ -425,6 +425,23 @@ input[type="file"] {
   border-radius: 999px;
 }
 
+.tab {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #d0d7de;
+  background: white;
+  cursor: pointer;
+}
+
+.tab-active {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #0078ff;
+  background: #0078ff;
+  color: white;
+  cursor: pointer;
+}
+
 /* 响应式适配 */
 @media (max-width: 960px) {
   .main-grid {
