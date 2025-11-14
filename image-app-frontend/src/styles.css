@@ -47,7 +47,7 @@ body {
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #f0f7ff, #c9e5ff);
+  background: radial-gradient(circle at top left, #0f172a, #1e293b, #0f172a);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text-main);
 }
@@ -185,8 +185,8 @@ button {
   padding: 18px;
   font-size: 13px;
   cursor: pointer;
-  background: #ffffff;
-  color: #1e2a37;
+  background: rgba(255,255,255,0.05);
+  color: #e5e7eb;
   font-weight: 500;
   text-align: center;
   transition:
@@ -206,7 +206,7 @@ button {
 
 /* 激活状态：颜色更亮，突出当前功能模块 */
 .tool-tab.active {
-  background: linear-gradient(135deg, #4ea5ff, #1b78ff);
+  background: linear-gradient(135deg, #3b82f6, #0ea5e9);
   color: #ffffff;
   border-color: rgba(56, 189, 248, 0.95);
   box-shadow:
@@ -226,6 +226,8 @@ button {
   gap: 24px;
   margin-top: 18px;
   align-items: stretch;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* 小屏单列 */
@@ -237,9 +239,8 @@ button {
 
 /* 通用卡片样式 */
 .card {
-  background: linear-gradient(135deg, #ffffff, #eef6ff);
-  border-radius: var(--radius);
-  border: 1px solid #d0e2ff;
+  background: linear-gradient(135deg, #0b1120, #111827);
+  border: 1px solid rgba(148,163,184,0.18);
   box-shadow:
           0 28px 90px rgba(15, 23, 42, 0.96),
           0 0 0 1px rgba(15, 23, 42, 0.9);
@@ -250,7 +251,7 @@ button {
 .card-main {
   display: flex;
   flex-direction: column;
-  min-height: 80vh;  /* 大约占屏幕 2/3 高度 */
+  min-height: 72vh;  /* 大约占屏幕 2/3 高度 */
 }
 .card-header {
   display: flex;

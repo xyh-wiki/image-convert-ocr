@@ -324,7 +324,7 @@ export default function App() {
           <h1 className="page-title">{t.title}</h1>
           <p className="page-subtitle">{t.subtitle}</p>
 
-          <div className="main-grid fullwidth">
+          <div className="main-grid dark-bg">
             {/* 左侧操作面板 */}
             <section className="tool-card">
               <div className="card-header">
@@ -337,31 +337,31 @@ export default function App() {
               {/* 5 大模式 Tab（与 URL 同步） */}
               <div className="mode-tabs">
                 <button
-                    className={mode === "convert" ? "tab-active" : "tab"}
+                    className={mode === "convert" ? "tool-btn tool-btn-active" : "tool-btn"}
                     onClick={() => updateUrl("convert")}
                 >
                   {t.convertTab}
                 </button>
                 <button
-                    className={mode === "ocr" ? "tab-active" : "tab"}
+                    className={mode === "ocr" ? "tool-btn tool-btn-active" : "tool-btn"}
                     onClick={() => updateUrl("ocr")}
                 >
                   {t.ocrTab}
                 </button>
                 <button
-                    className={mode === "compress" ? "tab-active" : "tab"}
+                    className={mode === "compress" ? "tool-btn tool-btn-active" : "tool-btn"}
                     onClick={() => updateUrl("compress")}
                 >
                   {t.compressTab}
                 </button>
                 <button
-                    className={mode === "crop" ? "tab-active" : "tab"}
+                    className={mode === "crop" ? "tool-btn tool-btn-active" : "tool-btn"}
                     onClick={() => updateUrl("crop")}
                 >
                   {t.cropTab}
                 </button>
                 <button
-                    className={mode === "resize" ? "tab-active" : "tab"}
+                    className={mode === "resize" ? "tool-btn tool-btn-active" : "tool-btn"}
                     onClick={() => updateUrl("resize")}
                 >
                   {t.resizeTab}
