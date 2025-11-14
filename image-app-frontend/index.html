@@ -1,36 +1,142 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Author:XYH Date:2025-11-14 Description: 前端入口 HTML，包含基础 SEO 与 Google Ads 引入 -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+  <!--
+    Author:XYH
+    Date:2025-11-14
+    Description: 前端入口 HTML，集成完整 SEO / OpenGraph / Twitter Card / Google Ads 配置
+  -->
 
-    <title>Online Image Format Converter & OCR Tool | PNG/JPEG/WebP/TIFF</title>
-    <meta name="description" content="Online image format converter supporting PNG, JPEG, WebP, TIFF, BMP, GIF, PSD and optional OCR text extraction. Fast, secure, and no software installation required." />
-    <meta name="keywords" content="image converter, online image format, PNG to JPG, WebP to PNG, OCR, image to text, PSD to PNG, TIFF to JPG" />
+  <!-- 基础编码与视口 -->
+  <meta charset="UTF-8" />
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
 
-    <!-- Open Graph for social sharing -->
-    <meta property="og:title" content="Online Image Format Converter & OCR" />
-    <meta property="og:description" content="Convert images between PNG, JPG, WebP, TIFF and more, with optional OCR text extraction." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://ocr.xyh.wiki" />
-    <meta property="og:image" content="https://ocr.xyh.wiki/cover.png" />
+  <!-- 页面标题（搜索结果与浏览器标题栏） -->
+  <title>
+    Online Image Converter & OCR Text Extraction | PNG / JPEG / WebP / TIFF
+  </title>
 
-    <!-- Canonical -->
-    <link rel="canonical" href="https://ocr.xyh.wiki" />
+  <!-- 核心描述（英文） -->
+  <meta
+          name="description"
+          content="Free online image format converter supporting PNG, JPG, WebP, TIFF, BMP, GIF, PSD and fast OCR text extraction. Convert images securely in your browser without login."
+  />
+  <!-- 中文补充描述（带 lang 标记，兼顾中英文场景） -->
+  <meta
+          name="description"
+          lang="zh-CN"
+          content="免费在线图片格式转换与 OCR 文字识别工具，支持 PNG、JPG、WebP、TIFF、GIF、BMP、PSD 等格式，无需登录，安全便捷。"
+  />
 
-    <!-- Google Ads: 请将 client 替换为你自己的发布者 ID -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
-            crossorigin="anonymous"></script>
+  <!-- 关键词（可适度保留，辅助长尾检索） -->
+  <meta
+          name="keywords"
+          content="image converter,image convert online,online OCR,image to text,PNG to JPG,WebP to PNG,TIFF to JPG,PSD to PNG,图片格式转换,在线OCR,图片转文字"
+  />
 
-    <link rel="stylesheet" href="/src/styles.css" />
+  <!-- 告诉搜索引擎可以正常收录 -->
+  <meta name="robots" content="index, follow" />
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8907413334960000"
-            crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <!-- 主题色（移动端地址栏、PWA 效果） -->
+  <meta name="theme-color" content="#2d71f2" />
+
+  <!-- Canonical 与多语言标记 -->
+  <link rel="canonical" href="https://ocr.xyh.wiki/" />
+  <!-- 由于中英文同页，通过 hreflang 告知搜索引擎多语言但同一 URL -->
+  <link rel="alternate" href="https://ocr.xyh.wiki/" hreflang="en" />
+  <link rel="alternate" href="https://ocr.xyh.wiki/" hreflang="zh-CN" />
+  <link rel="alternate" href="https://ocr.xyh.wiki/" hreflang="x-default" />
+
+  <!-- Open Graph（社交分享：微信、Facebook、Twitter 等使用） -->
+  <meta property="og:title" content="Online Image Converter & OCR Tool" />
+  <meta
+          property="og:description"
+          content="Convert image formats (PNG, JPG, WebP, TIFF, GIF, BMP, PSD) or extract text via OCR. Fast, free, and no login required."
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ocr.xyh.wiki/" />
+  <!-- 预览图：请确保 preview.png 已部署到对应路径 -->
+  <meta property="og:image" content="https://ocr.xyh.wiki/seo/preview.png" />
+
+  <!-- Twitter Card（在 X / Twitter 中的卡片展示） -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Online Image Converter & OCR" />
+  <meta
+          name="twitter:description"
+          content="Free tool to convert images and extract text with OCR. No installation, no login."
+  />
+  <meta
+          name="twitter:image"
+          content="https://ocr.xyh.wiki/seo/preview.png"
+  />
+
+  <!-- 站点图标与 Apple Touch Icon（可直接复用 preview.png，后续可以换为独立 favicon） -->
+  <link rel="icon" type="image/png" href="/seo/preview.png" />
+  <link rel="apple-touch-icon" href="/seo/preview.png" />
+
+  <!-- 结构化数据：帮助搜索引擎理解这是一个在线工具型网站 -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Online Image Converter & OCR",
+      "url": "https://ocr.xyh.wiki/",
+      "description": "Online image format converter with optional OCR text extraction. Supports PNG, JPG, WebP, TIFF, GIF, BMP, PSD.",
+      "inLanguage": ["en", "zh-CN"],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://ocr.xyh.wiki/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+
+  <!-- Google Ads（替换为你自己的发布者 ID；以下为示例） -->
+  <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8907413334960000"
+          crossorigin="anonymous"
+  ></script>
+
+  <!-- Vite 在打包时会替换样式与脚本路径；开发环境下引用 src/styles.css 更直观 -->
+  <link rel="stylesheet" href="/src/styles.css" />
+
+  <!--
+    为了在 React / CSS 尚未加载完时避免闪烁，这里补充一点极简布局样式：
+    仅用于“骨架屏”，真正的 UI 由 styles.css 与 React 控制
+  -->
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(
+              circle at top left,
+              #f0f4ff,
+              #f7f8fc 45%,
+              #eef3ff 100%
+      );
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+    }
+    #root {
+      min-height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+<!-- 无 JS 提示，对 SEO 也友好一些 -->
+<noscript>
+  This site requires JavaScript to run the image converter and OCR tools.
+</noscript>
+
+<!-- React 挂载点：具体 UI 布局在 src/main.jsx / src/App.jsx 中实现 -->
+<div id="root"></div>
+
+<!-- Vite 入口脚本 -->
+<script type="module" src="/src/main.jsx"></script>
+</body>
 </html>
