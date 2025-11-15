@@ -25,7 +25,7 @@ const texts = {
 
     uploadTitle: "Upload & Tools",
     uploadDesc:
-      "Choose a tool mode below. Upload an image to start processing.",
+        "Choose a tool mode below. Upload an image to start processing.",
     uploadMain: "Click or drag image here to upload",
     uploadSub: "Supported: PNG, JPEG, WEBP, TIFF, GIF, BMP, PSD",
     uploadMeta: "Clear images produce better results.",
@@ -271,291 +271,292 @@ export default function App() {
   };
 
   return (
-    <div className="app-shell">
-      {/* 顶部品牌 + 语言切换 */}
-      <header className="app-header">
-        <div className="app-header-inner">
-          <div className="brand">
-            <div className="brand-icon">IC</div>
-            <div>
-              <div className="brand-text-main">{t.brandMain}</div>
-              <div className="brand-text-sub">{t.brandSub}</div>
+      <div className="app-shell">
+        {/* 顶部品牌 + 语言切换 */}
+        <header className="app-header">
+          <div className="app-header-inner">
+            <div className="brand">
+              <div className="brand-icon">IC</div>
+              <div>
+                <div className="brand-text-main">{t.brandMain}</div>
+                <div className="brand-text-sub">{t.brandSub}</div>
+              </div>
+            </div>
+
+            <div className="lang-switch">
+              <button
+                  className={lang === "en" ? "lang-btn lang-btn-active" : "lang-btn"}
+                  onClick={() => setLang("en")}
+              >
+                EN
+              </button>
+              <button
+                  className={lang === "zh" ? "lang-btn lang-btn-active" : "lang-btn"}
+                  onClick={() => setLang("zh")}
+              >
+                中文
+              </button>
             </div>
           </div>
+        </header>
 
-          <div className="lang-switch">
-            <button
-              className={lang === "en" ? "lang-btn lang-btn-active" : "lang-btn"}
-              onClick={() => setLang("en")}
-            >
-              EN
-            </button>
-            <button
-              className={lang === "zh" ? "lang-btn lang-btn-active" : "lang-btn"}
-              onClick={() => setLang("zh")}
-            >
-              中文
-            </button>
-          </div>
-        </div>
-      </header>
+        {/* 主内容区域：顶部说明 + 工具画布 */}
+        <main className="app-main">
+          <section className="tool-hero">
+            <h1 className="page-title">{t.title}</h1>
+            {/* ✅ 修正 className 拼写 */}
+            <p className="page-subtitle">{t.subtitle}</p>
 
-      {/* 主内容区域：顶部说明 + 工具画布 */}
-      <main className="app-main">
-        <section className="tool-hero">
-          <h1 className="page-title">{t.title}</h1>
-          <p className="page-subtitle">{t.subtitle}</p>
+            {/* 五个大功能模块按钮：横向功能带，只保留图标 + 标题 */}
+            <nav className="tool-strip" aria-label="Image tools">
+              <button
+                  type="button"
+                  className={mode === "convert" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  onClick={() => updateUrl("convert")}
+                  aria-label={t.convertDesc}
+              >
+                <div className="tool-pill-header">
+                  <span className="tool-pill-icon">🌀</span>
+                  <span className="tool-pill-title">{t.convertTab}</span>
+                </div>
+              </button>
 
-          {/* 五个大功能模块按钮：横向功能带，大按钮 + 描述 */}
-          <nav className="tool-strip" aria-label="Image tools">
-            <button
-              type="button"
-              className={mode === "convert" ? "tool-pill tool-pill-active" : "tool-pill"}
-              onClick={() => updateUrl("convert")}
-            >
-              <div className="tool-pill-header">
-                <span className="tool-pill-icon">🌀</span>
-                <span className="tool-pill-title">{t.convertTab}</span>
-              </div>
-              <div className="tool-pill-desc">{t.convertDesc}</div>
-            </button>
+              <button
+                  type="button"
+                  className={mode === "ocr" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  onClick={() => updateUrl("ocr")}
+                  aria-label={t.ocrDesc}
+              >
+                <div className="tool-pill-header">
+                  <span className="tool-pill-icon">🔍</span>
+                  <span className="tool-pill-title">{t.ocrTab}</span>
+                </div>
+              </button>
 
-            <button
-              type="button"
-              className={mode === "ocr" ? "tool-pill tool-pill-active" : "tool-pill"}
-              onClick={() => updateUrl("ocr")}
-            >
-              <div className="tool-pill-header">
-                <span className="tool-pill-icon">🔍</span>
-                <span className="tool-pill-title">{t.ocrTab}</span>
-              </div>
-              <div className="tool-pill-desc">{t.ocrDesc}</div>
-            </button>
+              <button
+                  type="button"
+                  className={mode === "compress" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  onClick={() => updateUrl("compress")}
+                  aria-label={t.compressDesc}
+              >
+                <div className="tool-pill-header">
+                  <span className="tool-pill-icon">🗜</span>
+                  <span className="tool-pill-title">{t.compressTab}</span>
+                </div>
+              </button>
 
-            <button
-              type="button"
-              className={mode === "compress" ? "tool-pill tool-pill-active" : "tool-pill"}
-              onClick={() => updateUrl("compress")}
-            >
-              <div className="tool-pill-header">
-                <span className="tool-pill-icon">🗜</span>
-                <span className="tool-pill-title">{t.compressTab}</span>
-              </div>
-              <div className="tool-pill-desc">{t.compressDesc}</div>
-            </button>
+              <button
+                  type="button"
+                  className={mode === "crop" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  onClick={() => updateUrl("crop")}
+                  aria-label={t.cropDesc}
+              >
+                <div className="tool-pill-header">
+                  <span className="tool-pill-icon">✂️</span>
+                  <span className="tool-pill-title">{t.cropTab}</span>
+                </div>
+              </button>
 
-            <button
-              type="button"
-              className={mode === "crop" ? "tool-pill tool-pill-active" : "tool-pill"}
-              onClick={() => updateUrl("crop")}
-            >
-              <div className="tool-pill-header">
-                <span className="tool-pill-icon">✂️</span>
-                <span className="tool-pill-title">{t.cropTab}</span>
-              </div>
-              <div className="tool-pill-desc">{t.cropDesc}</div>
-            </button>
+              <button
+                  type="button"
+                  className={mode === "resize" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  onClick={() => updateUrl("resize")}
+                  aria-label={t.resizeDesc}
+              >
+                <div className="tool-pill-header">
+                  <span className="tool-pill-icon">📐</span>
+                  <span className="tool-pill-title">{t.resizeTab}</span>
+                </div>
+              </button>
+            </nav>
+          </section>
 
-            <button
-              type="button"
-              className={mode === "resize" ? "tool-pill tool-pill-active" : "tool-pill"}
-              onClick={() => updateUrl("resize")}
-            >
-              <div className="tool-pill-header">
-                <span className="tool-pill-icon">📐</span>
-                <span className="tool-pill-title">{t.resizeTab}</span>
-              </div>
-              <div className="tool-pill-desc">{t.resizeDesc}</div>
-            </button>
-          </nav>
-        </section>
-
-        {/* 主功能画布：左右拉满，整体高度占视口上方区域 */}
-        <section className="card tool-card">
-          <div className="tool-card-header">
-            <div className="tool-card-title">{modeInfo[mode].title}</div>
-            <div className="tool-card-desc">{modeInfo[mode].desc}</div>
-          </div>
-
-          {/* 上传区域 */}
-          <label
-            className="upload-area"
-            onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()}
-          >
-            <div className="upload-icon">↑</div>
-            <div style={{ flex: 1 }}>
-              <div className="upload-text-main">{t.uploadMain}</div>
-              <div className="upload-text-sub">{t.uploadSub}</div>
+          {/* 主功能画布：左右拉满，整体高度占视口上方区域 */}
+          <section className="card tool-card">
+            <div className="tool-card-header">
+              <div className="tool-card-title">{modeInfo[mode].title}</div>
+              <div className="tool-card-desc">{modeInfo[mode].desc}</div>
             </div>
-            <div className="upload-meta">{t.uploadMeta}</div>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
-          </label>
 
-          {/* 预览区域 */}
-          {previewUrl && (
-            <div className="preview-wrapper">
-              <div className="preview-label">{file?.name}</div>
-              <img src={previewUrl} className="preview-image" alt="preview" />
-            </div>
-          )}
+            {/* 上传区域 */}
+            <label
+                className="upload-area"
+                onDrop={handleDrop}
+                onDragOver={(e) => e.preventDefault()}
+            >
+              <div className="upload-icon">↑</div>
+              <div style={{ flex: 1 }}>
+                <div className="upload-text-main">{t.uploadMain}</div>
+                <div className="upload-text-sub">{t.uploadSub}</div>
+              </div>
+              <div className="upload-meta">{t.uploadMeta}</div>
+              <input type="file" accept="image/*" onChange={handleFileChange} />
+            </label>
 
-          {/* 按模式显示参数面板 */}
-          {mode === "convert" && (
-            <div className="form-row">
-              <div className="field">
-                <div className="preview-label">{t.targetLabel}</div>
-                <select
-                  className="select"
-                  value={targetFormat}
-                  onChange={(e) => setTargetFormat(e.target.value)}
+            {/* 预览区域 */}
+            {previewUrl && (
+                <div className="preview-wrapper">
+                  <div className="preview-label">{file?.name}</div>
+                  <img src={previewUrl} className="preview-image" alt="preview" />
+                </div>
+            )}
+
+            {/* 按模式显示参数面板 */}
+            {mode === "convert" && (
+                <div className="form-row">
+                  <div className="field">
+                    <div className="preview-label">{t.targetLabel}</div>
+                    <select
+                        className="select"
+                        value={targetFormat}
+                        onChange={(e) => setTargetFormat(e.target.value)}
+                    >
+                      <option value="png">PNG</option>
+                      <option value="jpg">JPEG</option>
+                      <option value="webp">WebP</option>
+                      <option value="bmp">BMP</option>
+                      <option value="gif">GIF</option>
+                      <option value="psd">PSD</option>
+                    </select>
+                  </div>
+                </div>
+            )}
+
+            {mode === "compress" && (
+                <div className="form-row">
+                  <div className="field">
+                    <div className="preview-label">{t.compressLabel}</div>
+                    <input
+                        type="range"
+                        min="20"
+                        max="100"
+                        value={compressPct}
+                        onChange={(e) => setCompressPct(Number(e.target.value))}
+                        className="input"
+                    />
+                    <div className="slider-value">{compressPct}%</div>
+                  </div>
+                </div>
+            )}
+
+            {mode === "crop" && (
+                <div className="form-row column">
+                  <div className="preview-label">{t.cropLabel}</div>
+                  <div className="field-row">
+                    <input
+                        className="input"
+                        placeholder={t.cropX}
+                        value={cropX}
+                        onChange={(e) => setCropX(e.target.value)}
+                    />
+                    <input
+                        className="input"
+                        placeholder={t.cropY}
+                        value={cropY}
+                        onChange={(e) => setCropY(e.target.value)}
+                    />
+                  </div>
+                  <div className="field-row">
+                    <input
+                        className="input"
+                        placeholder={t.cropW}
+                        value={cropW}
+                        onChange={(e) => setCropW(e.target.value)}
+                    />
+                    <input
+                        className="input"
+                        placeholder={t.cropH}
+                        value={cropH}
+                        onChange={(e) => setCropH(e.target.value)}
+                    />
+                  </div>
+                </div>
+            )}
+
+            {mode === "resize" && (
+                <div className="form-row column">
+                  <div className="preview-label">{t.resizeLabel}</div>
+                  <div className="field-row">
+                    <input
+                        className="input"
+                        placeholder={t.resizeW}
+                        value={resizeW}
+                        onChange={(e) => setResizeW(e.target.value)}
+                    />
+                    <input
+                        className="input"
+                        placeholder={t.resizeH}
+                        value={resizeH}
+                        onChange={(e) => setResizeH(e.target.value)}
+                    />
+                  </div>
+                </div>
+            )}
+
+            {/* 提示信息 */}
+            {helper && (
+                <div
+                    className={
+                        "helper-text " +
+                        (helperType === "error"
+                            ? "helper-text-error"
+                            : helperType === "success"
+                                ? "helper-text-success"
+                                : "")
+                    }
                 >
-                  <option value="png">PNG</option>
-                  <option value="jpg">JPEG</option>
-                  <option value="webp">WebP</option>
-                  <option value="bmp">BMP</option>
-                  <option value="gif">GIF</option>
-                  <option value="psd">PSD</option>
-                </select>
+                  {helper}
+                </div>
+            )}
+
+            {/* 操作按钮区 */}
+            <div className="action-row">
+              <button className="btn" onClick={handleStart} disabled={loading}>
+                {loading ? "…" : t.btnStart}
+              </button>
+              <button
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setFile(null);
+                    if (previewUrl) URL.revokeObjectURL(previewUrl);
+                    setPreviewUrl(null);
+                  }}
+              >
+                {t.btnClear}
+              </button>
+            </div>
+          </section>
+
+          {/* 底部广告与说明区域 */}
+          <section className="bottom-ads">
+            <div className="bottom-ads-inner">
+              <div className="bottom-ads-text">
+                Image Convert &amp; OCR provides image format conversion,
+                compression, cropping, resizing, and OCR text extraction. All
+                processing is completed on the server side, requiring no software
+                installation, making it suitable for daily office work and
+                development debugging.
+              </div>
+              <div className="bottom-ads-slot">
+                <ins
+                    className="adsbygoogle"
+                    style={{ display: "block" }}
+                    data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                    data-ad-slot="2233445566"
+                    data-ad-format="auto"
+                    data-full-width-responsive="true"
+                ></ins>
               </div>
             </div>
-          )}
+          </section>
+        </main>
 
-          {mode === "compress" && (
-            <div className="form-row">
-              <div className="field">
-                <div className="preview-label">{t.compressLabel}</div>
-                <input
-                  type="range"
-                  min="20"
-                  max="100"
-                  value={compressPct}
-                  onChange={(e) => setCompressPct(Number(e.target.value))}
-                  className="input"
-                />
-                <div className="slider-value">{compressPct}%</div>
-              </div>
-            </div>
-          )}
-
-          {mode === "crop" && (
-            <div className="form-row column">
-              <div className="preview-label">{t.cropLabel}</div>
-              <div className="field-row">
-                <input
-                  className="input"
-                  placeholder={t.cropX}
-                  value={cropX}
-                  onChange={(e) => setCropX(e.target.value)}
-                />
-                <input
-                  className="input"
-                  placeholder={t.cropY}
-                  value={cropY}
-                  onChange={(e) => setCropY(e.target.value)}
-                />
-              </div>
-              <div className="field-row">
-                <input
-                  className="input"
-                  placeholder={t.cropW}
-                  value={cropW}
-                  onChange={(e) => setCropW(e.target.value)}
-                />
-                <input
-                  className="input"
-                  placeholder={t.cropH}
-                  value={cropH}
-                  onChange={(e) => setCropH(e.target.value)}
-                />
-              </div>
-            </div>
-          )}
-
-          {mode === "resize" && (
-            <div className="form-row column">
-              <div className="preview-label">{t.resizeLabel}</div>
-              <div className="field-row">
-                <input
-                  className="input"
-                  placeholder={t.resizeW}
-                  value={resizeW}
-                  onChange={(e) => setResizeW(e.target.value)}
-                />
-                <input
-                  className="input"
-                  placeholder={t.resizeH}
-                  value={resizeH}
-                  onChange={(e) => setResizeH(e.target.value)}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* 提示信息 */}
-          {helper && (
-            <div
-              className={
-                "helper-text " +
-                (helperType === "error"
-                  ? "helper-text-error"
-                  : helperType === "success"
-                  ? "helper-text-success"
-                  : "")
-              }
-            >
-              {helper}
-            </div>
-          )}
-
-          {/* 操作按钮区 */}
-          <div className="action-row">
-            <button className="btn" onClick={handleStart} disabled={loading}>
-              {loading ? "…" : t.btnStart}
-            </button>
-            <button
-              className="btn btn-ghost"
-              onClick={() => {
-                setFile(null);
-                if (previewUrl) URL.revokeObjectURL(previewUrl);
-                setPreviewUrl(null);
-              }}
-            >
-              {t.btnClear}
-            </button>
+        {/* 页脚说明 */}
+        <footer className="app-footer">
+          <div className="app-footer-inner">
+            <div className="footer-text">{t.footerText}</div>
           </div>
-        </section>
-
-        {/* 底部广告与说明区域，预留给 Google Ads */}
-        <section className="bottom-ads">
-          <div className="bottom-ads-inner">
-            <div className="bottom-ads-text">
-              Image Convert &amp; OCR provides image format conversion,
-              compression, cropping, resizing, and OCR text extraction. All
-              processing is completed on the server side, requiring no software
-              installation, making it suitable for daily office work and
-              development debugging.
-            </div>
-            <div className="bottom-ads-slot">
-              <ins
-                className="adsbygoogle"
-                style={{ display: "block" }}
-                data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                data-ad-slot="2233445566"
-                data-ad-format="auto"
-                data-full-width-responsive="true"
-              ></ins>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* 页脚说明 */}
-      <footer className="app-footer">
-        <div className="app-footer-inner">
-          <div className="footer-text">{t.footerText}</div>
-        </div>
-      </footer>
-    </div>
+        </footer>
+      </div>
   );
 }
