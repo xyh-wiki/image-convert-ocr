@@ -183,6 +183,18 @@ export default function App() {
   const [canDownloadConverted, setCanDownloadConverted] = useState(false);
   const [convertFilename, setConvertFilename] = useState("");
 
+  // ========== 新增：压缩 / 裁剪 / 调整尺寸处理结果（用于下载） ==========
+  /**
+   * processedImage:
+   * {
+   *   mode: "compress" | "crop" | "resize",
+   *   base64: 处理后的图片 base64,
+   *   contentType: MIME 类型，如 image/png,
+   *   filename: 建议下载的文件名
+   * }
+   */
+  const [processedImage, setProcessedImage] = useState(null);
+
   // ========== 新增：OCR 识别结果文本 ==========
   const [ocrText, setOcrText] = useState("");
 
@@ -220,6 +232,9 @@ export default function App() {
     // 新文件时重置上一轮结果
     setConvertedInfo(null);
     setOcrText("");
+    setProcessedImage(null);
+    setCanDownloadConverted(false);
+    setConvertFilename("");
   };
 
   const handleDrop = (e) => {
@@ -234,6 +249,9 @@ export default function App() {
     // 新文件时重置上一轮结果
     setConvertedInfo(null);
     setOcrText("");
+    setProcessedImage(null);
+    setCanDownloadConverted(false);
+    setConvertFilename("");
   };
 
   // ========== 主处理入口 ==========
@@ -250,9 +268,12 @@ export default function App() {
       return;
     }
 
-    // 每次处理前清空上一轮的转换结果 / OCR 文本
+    // 每次处理前清空上一轮的转换结果 / OCR 文本 / 处理后的图片
     setConvertedInfo(null);
     setOcrText("");
+    setProcessedImage(null);
+    setCanDownloadConverted(false);
+    setConvertFilename("");
 
     const form = new FormData();
     form.append("file", file);
@@ -295,18 +316,34 @@ export default function App() {
         }
 
         case "compress": {
-          // ========== 3. 压缩模式：传递质量参数（百分比） ==========
+          // ========== 3. 压缩模式：传递质量参数（百分比）并保存结果用于下载 ==========
           // 这里仍传 20-100 的百分比，后端已支持 >1 自动除以 100，无需前端自己换算
           form.append("quality", compressPct);
           showHelper(t.helperConverting);
           data = await compressImage(form);
-          // 当前布局中没有预览/下载压缩结果，只提示成功即可
+
+          if (data && (data.base64 || data.imageBase64)) {
+            const base64 = data.base64 || data.imageBase64;
+            const contentType =
+              data.contentType || data.mimeType || "image/*";
+            const defaultName =
+              (file && file.name ? file.name.replace(/\.[^.]+$/, "") : "image") +
+              "_compressed.png";
+            const filename = data.filename || defaultName;
+            setProcessedImage({
+              mode: "compress",
+              base64,
+              contentType,
+              filename,
+            });
+          }
+
           showHelper(t.helperSuccess, "success");
           break;
         }
 
         case "crop": {
-          // ========== 4. 裁剪模式：前端先做参数校验 ==========
+          // ========== 4. 裁剪模式：前端先做参数校验，并保存结果用于下载 ==========
           // 将输入的字符串强制转为数字，避免空串 / 非数字直接传给后端
           const x = Number(cropX) || 0;
           const y = Number(cropY) || 0;
@@ -315,11 +352,10 @@ export default function App() {
 
           if (w <= 0 || h <= 0) {
             showHelper(
-                (lang === "zh"
-                    ? "裁剪宽度和高度必须大于 0。"
-                    : "Width and height for cropping must be greater than 0.") +
-                "",
-                "error"
+              (lang === "zh"
+                ? "裁剪宽度和高度必须大于 0。"
+                : "Width and height for cropping must be greater than 0.") + "",
+              "error"
             );
             return;
           }
@@ -331,22 +367,38 @@ export default function App() {
 
           showHelper(t.helperConverting);
           data = await cropImage(form);
-          // 当前布局中没有单独展示裁剪后预览，仅提示成功
+
+          if (data && (data.base64 || data.imageBase64)) {
+            const base64 = data.base64 || data.imageBase64;
+            const contentType =
+              data.contentType || data.mimeType || "image/*";
+            const defaultName =
+              (file && file.name ? file.name.replace(/\.[^.]+$/, "") : "image") +
+              "_crop.png";
+            const filename = data.filename || defaultName;
+            setProcessedImage({
+              mode: "crop",
+              base64,
+              contentType,
+              filename,
+            });
+          }
+
           showHelper(t.helperSuccess, "success");
           break;
         }
 
         case "resize": {
-          // ========== 5. 调整尺寸模式：至少有一个>0，避免都为空 ==========
+          // ========== 5. 调整尺寸模式：至少有一个>0，并保存结果用于下载 ==========
           const w = Number(resizeW) || 0;
           const h = Number(resizeH) || 0;
 
           if (w <= 0 && h <= 0) {
             showHelper(
-                lang === "zh"
-                    ? "宽度和高度不能同时为空或小于等于 0。"
-                    : "Width and height cannot both be empty or <= 0.",
-                "error"
+              lang === "zh"
+                ? "宽度和高度不能同时为空或小于等于 0。"
+                : "Width and height cannot both be empty or <= 0.",
+              "error"
             );
             return;
           }
@@ -360,7 +412,23 @@ export default function App() {
 
           showHelper(t.helperConverting);
           data = await resizeImage(form);
-          // 同样仅提示成功
+
+          if (data && (data.base64 || data.imageBase64)) {
+            const base64 = data.base64 || data.imageBase64;
+            const contentType =
+              data.contentType || data.mimeType || "image/*";
+            const defaultName =
+              (file && file.name ? file.name.replace(/\.[^.]+$/, "") : "image") +
+              "_resize.png";
+            const filename = data.filename || defaultName;
+            setProcessedImage({
+              mode: "resize",
+              base64,
+              contentType,
+              filename,
+            });
+          }
+
           showHelper(t.helperSuccess, "success");
           break;
         }
@@ -415,6 +483,32 @@ export default function App() {
         "error"
       );
     }
+  };
+
+  /**
+   * 点击“下载处理结果（压缩 / 裁剪 / 调整尺寸）”按钮时触发：
+   *  - 使用 processedImage 中的 base64 和 contentType 生成 data URL
+   *  - 前端直接触发浏览器下载
+   */
+  const handleDownloadProcessed = () => {
+    if (!processedImage || !processedImage.base64) {
+      showHelper(
+        lang === "zh"
+          ? "暂无可下载的处理结果，请先执行一次处理。"
+          : "No processed image to download. Please run a task first.",
+        "error"
+      );
+      return;
+    }
+
+    const { base64, contentType, filename } = processedImage;
+    const url = `data:${contentType || "image/*"};base64,${base64}`;
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename || "processed-image.png";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
   // 当前模式的标题和描述（用于主画布顶部）
@@ -662,6 +756,22 @@ export default function App() {
               </div>
             )}
 
+            {/* 压缩 / 裁剪 / 调整尺寸模式下的下载按钮展示区域（使用 base64 data URL） */}
+            {(mode === "compress" || mode === "crop" || mode === "resize") &&
+              processedImage &&
+              processedImage.mode === mode &&
+              processedImage.base64 && (
+                <div className="form-row">
+                  <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={handleDownloadProcessed}
+                  >
+                    {t.downloadLinkText}
+                  </button>
+                </div>
+              )}
+
             {/* 提示信息 */}
             {helper && (
                 <div
@@ -691,6 +801,7 @@ export default function App() {
                     setPreviewUrl(null);
                     setConvertedInfo(null);
                     setOcrText("");
+                    setProcessedImage(null);
                     setCanDownloadConverted(false);
                     setConvertFilename("");
                   }}
