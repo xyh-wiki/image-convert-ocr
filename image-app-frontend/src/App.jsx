@@ -308,67 +308,48 @@ export default function App() {
             <p className="page-subtitle">{t.subtitle}</p>
 
             {/* 五个大功能模块按钮：横向功能带，只保留图标 + 标题 */}
-            <nav className="tool-strip" aria-label="Image tools">
+            {/* 五个大功能模块按钮：用 .mode-tabs + .tab */}
+            <div className="mode-tabs">
               <button
-                  type="button"
-                  className={mode === "convert" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  className={mode === "convert" ? "tab tab-active" : "tab"}
                   onClick={() => updateUrl("convert")}
-                  aria-label={t.convertDesc}
               >
-                <div className="tool-pill-header">
-                  <span className="tool-pill-icon">🌀</span>
-                  <span className="tool-pill-title">{t.convertTab}</span>
-                </div>
+                <strong>🔄 {t.convertTab}</strong>
+                <span>{t.convertDesc}</span>
               </button>
 
               <button
-                  type="button"
-                  className={mode === "ocr" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  className={mode === "ocr" ? "tab tab-active" : "tab"}
                   onClick={() => updateUrl("ocr")}
-                  aria-label={t.ocrDesc}
               >
-                <div className="tool-pill-header">
-                  <span className="tool-pill-icon">🔍</span>
-                  <span className="tool-pill-title">{t.ocrTab}</span>
-                </div>
+                <strong>🔍 {t.ocrTab}</strong>
+                <span>{t.ocrDesc}</span>
               </button>
 
               <button
-                  type="button"
-                  className={mode === "compress" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  className={mode === "compress" ? "tab tab-active" : "tab"}
                   onClick={() => updateUrl("compress")}
-                  aria-label={t.compressDesc}
               >
-                <div className="tool-pill-header">
-                  <span className="tool-pill-icon">🗜</span>
-                  <span className="tool-pill-title">{t.compressTab}</span>
-                </div>
+                <strong>📦 {t.compressTab}</strong>
+                <span>{t.compressDesc}</span>
               </button>
 
               <button
-                  type="button"
-                  className={mode === "crop" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  className={mode === "crop" ? "tab tab-active" : "tab"}
                   onClick={() => updateUrl("crop")}
-                  aria-label={t.cropDesc}
               >
-                <div className="tool-pill-header">
-                  <span className="tool-pill-icon">✂️</span>
-                  <span className="tool-pill-title">{t.cropTab}</span>
-                </div>
+                <strong>✂️ {t.cropTab}</strong>
+                <span>{t.cropDesc}</span>
               </button>
 
               <button
-                  type="button"
-                  className={mode === "resize" ? "tool-pill tool-pill-active" : "tool-pill"}
+                  className={mode === "resize" ? "tab tab-active" : "tab"}
                   onClick={() => updateUrl("resize")}
-                  aria-label={t.resizeDesc}
               >
-                <div className="tool-pill-header">
-                  <span className="tool-pill-icon">📐</span>
-                  <span className="tool-pill-title">{t.resizeTab}</span>
-                </div>
+                <strong>📐 {t.resizeTab}</strong>
+                <span>{t.resizeDesc}</span>
               </button>
-            </nav>
+            </div>
           </section>
 
           {/* 主功能画布：左右拉满，整体高度占视口上方区域 */}
