@@ -617,6 +617,46 @@ input[type="range"].input::-webkit-slider-thumb {
   color: var(--text-sub);
 }
 
+/*
+ * OCR 结果外层容器：
+ *  - 保持与其他 form-row 一致的宽度
+ *  - 稍微加一点上边距，避免紧贴标题
+ */
+.ocr-result-wrapper {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/*
+ * OCR 结果文本框：
+ *  - 宽度 100%，适配当前卡片宽度
+ *  - 固定一个合适的高度/最大高度，避免“巨长椭圆条”横穿整个屏幕
+ *  - 用比较常规的圆角和阴影，不复用 input 那种夸张的发光效果，减少遮挡感
+ */
+.ocr-result-textarea {
+  width: 100%;
+  min-height: 180px;
+  max-height: 260px;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e5e5e5;
+  background: #0b1020;
+  border-radius: 12px;
+  border: 1px solid rgba(160, 174, 255, 0.5);
+  outline: none;
+  resize: vertical;
+  overflow: auto;
+  box-shadow: 0 0 0 1px rgba(160, 174, 255, 0.4);
+}
+
+/* focus 时稍微高亮一点，保持和整体风格一致 */
+.ocr-result-textarea:focus {
+  box-shadow: 0 0 0 1px rgba(129, 230, 217, 0.8),
+  0 0 18px rgba(129, 230, 217, 0.3);
+  border-color: rgba(129, 230, 217, 0.9);
+}
+
 /* ================== 响应式 ================== */
 
 @media (max-width: 960px) {
