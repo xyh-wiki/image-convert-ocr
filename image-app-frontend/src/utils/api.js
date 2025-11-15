@@ -1,138 +1,103 @@
 /**
  * @Author:XYH
  * @Date:2025-11-15
- * @Description:
- *  前端 API 封装模块：
- *   - 封装所有与图片相关的后端接口请求
- *   - 统一处理 HTTP 错误并抛出带详细信息的 Error，方便前端展示
- *
- *  注意：
- *   1. 这里只能写「纯 JS」，不能写 JSX（比如 <div>...</div>），否则 Vite 构建会报错。
- *   2. BASE_URL 支持通过 .env 配置，也可以在 HTML 中挂一个全局变量备用。
+ * @Description: 前端接口封装工具，统一与后端进行交互
  */
 
-// ===============================
-// 1. 后端基础地址
-// ===============================
-
-// 优先读取 Vite 环境变量，其次读取 window.__IMAGE_APP_API__（可在 index.html 中注入），
-// 最后兜底为你的线上网关地址。
-const BASE_URL =
+// 优先从环境变量读取接口地址
+const API_BASE =
     import.meta.env.VITE_API_BASE_URL ||
-    (typeof window !== "undefined" && window.__IMAGE_APP_API__) ||
-    "https://ocr.api.xyh.wiki";
+    (window.__OCR_API_BASE__ ? window.__OCR_API_BASE__ : "");
 
 /**
- * 通用的 fetch 包装：
- *  - 仅负责 POST FormData 到指定 urlPath
- *  - 若返回非 2xx，会读取 body 文本并抛出 Error
- *
- * @param {string} urlPath 例如 '/api/image/convert'
- * @param {FormData} formData 表单数据，必须包含 file 等字段
- * @returns {Promise<object>} 成功则返回 JSON 对象
+ * 通用 POST 表单请求
+ * @param {string} path 接口路径，如 /api/image/convert
+ * @param {FormData} formData 表单数据
+ * @param {Object} options 其他选项（如返回类型）
+ * @returns {Promise<any>}
  */
-async function postForm(urlPath, formData) {
-  const resp = await fetch(`${BASE_URL}${urlPath}`, {
+async function postForm(path, formData, options = {}) {
+  const resp = await fetch(`${API_BASE}${path}`, {
     method: "POST",
     body: formData,
   });
 
-  if (!resp.ok) {
-    // 读取返回文本，方便上层提示更详细信息
-    let text = "";
-    try {
-      text = await resp.text();
-    } catch (e) {
-      // ignore
+  // 如果需要 Blob（例如下载）
+  if (options.responseType === "blob") {
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new Error(`HTTP ${resp.status}: ${text}`);
     }
-    // 抛出 Error，让调用方 try/catch 统一处理
-    throw new Error(`HTTP ${resp.status}: ${text || "Request failed"}`);
+    return await resp.blob();
   }
 
-  // 正常情况返回 JSON
-  return resp.json();
+  const text = await resp.text();
+  let data;
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (e) {
+    throw new Error(`响应解析失败: ${e.message}, 原始响应: ${text}`);
+  }
+
+  if (!resp.ok || data.success === false) {
+    const msg =
+        (data && data.message) ||
+        `HTTP ${resp.status}: ${text || "Unknown error"}`;
+    throw new Error(msg);
+  }
+
+  return data;
 }
 
-// ===============================
-// 2. 具体业务接口封装
-// ===============================
-
 /**
- * 图片格式转换接口
- * 后端：POST /api/image/convert
- *
- * @param {FormData} formData 需要包含：
- *   - file: 图片文件
- *   - targetFormat: 目标格式（png/jpg/webp/gif/psd/bmp...）
- * @returns {Promise<object>} 后端返回 JSON，如：
- *   {
- *     success: true,
- *     filename: "xxx.png",
- *     contentType: "image/png",
- *     base64: "....",
- *     width: 1024,
- *     height: 768,
- *     targetFormat: "png"
- *   }
+ * 图片格式转换
  */
-export async function convertImage(formData) {
+export function convertImage(formData) {
   return postForm("/api/image/convert", formData);
 }
 
 /**
- * OCR 文本识别接口
- * 后端：POST /api/image/ocr
- *
- * @param {FormData} formData 需要包含：
- *   - file: 图片文件
- * @returns {Promise<object>} 后端返回 JSON，如：
- *   {
- *     success: true,
- *     ocrText: "识别出来的文本..."
- *   }
+ * 下载已转换的图片（点击下载按钮时调用）
  */
-export async function ocrImage(formData) {
+export function downloadConverted(formData) {
+  return postForm("/api/image/download", formData, { responseType: "blob" });
+}
+
+/**
+ * OCR 识别
+ */
+export function ocrImage(formData) {
   return postForm("/api/image/ocr", formData);
 }
 
 /**
- * 图片压缩接口
- * 后端：POST /api/image/compress
- *
- * @param {FormData} formData 建议包含：
- *   - file: 图片文件（必传）
- *   - quality: 压缩质量，0-100，可选，后端做兜底
- * @returns {Promise<object>} 后端返回 JSON，格式和 convert 基本一致
+ * 图片压缩
+ * 这里特别注意：前端如果 UI 上使用 1-100 的滑块，需要转换为 0-1 或在参数中标记
+ * 为了兼容后端，统一在这里将 1-100 转为 0-1
  */
-export async function compressImage(formData) {
+export function compressImage(formData, rawQuality) {
+  // rawQuality 为前端的原始值（1-100），如果传了，就覆盖 formData 中的 quality
+  if (typeof rawQuality === "number") {
+    let q = rawQuality;
+    // 转换为 0-1 的小数
+    if (q > 1) {
+      q = q / 100.0;
+    }
+    formData.set("quality", String(q));
+  }
   return postForm("/api/image/compress", formData);
 }
 
 /**
- * 图片裁剪接口
- * 后端：POST /api/image/crop
- *
- * @param {FormData} formData 建议包含：
- *   - file: 图片文件（必传）
- *   - x: 裁剪起点 X（像素）
- *   - y: 裁剪起点 Y（像素）
- *   - width: 裁剪宽度（像素）
- *   - height: 裁剪高度（像素）
- *  具体参数细节以后端实现为准，这里只负责转发。
+ * 图片裁剪
  */
-export async function cropImage(formData) {
+export function cropImage(formData) {
   return postForm("/api/image/crop", formData);
 }
 
 /**
- * 调整尺寸接口
- * 后端：POST /api/image/resize
- *
- * @param {FormData} formData 建议包含：
- *   - file: 图片文件（必传）
- *   - width: 目标宽度（像素）
- *   - height: 目标高度（像素，可选，后端可按等比缩放）
+ * 图片尺寸调整
  */
-export async function resizeImage(formData) {
+export function resizeImage(formData) {
   return postForm("/api/image/resize", formData);
 }
