@@ -11,6 +11,7 @@ import {
   compressImage,
   cropImage,
   resizeImage,
+  downloadConverted,
 } from "./utils/api.js";
 
 /**
@@ -174,8 +175,13 @@ export default function App() {
    *   filename: 建议下载文件名,
    *   contentType: MIME 类型
    * }
+   * （当前仅保留字段以兼容旧逻辑，不再依赖 base64）
    */
   const [convertedInfo, setConvertedInfo] = useState(null);
+
+  // ========== 新增：格式转换下载状态（不再依赖 base64） ==========
+  const [canDownloadConverted, setCanDownloadConverted] = useState(false);
+  const [convertFilename, setConvertFilename] = useState("");
 
   // ========== 新增：OCR 识别结果文本 ==========
   const [ocrText, setOcrText] = useState("");
@@ -257,28 +263,22 @@ export default function App() {
 
       switch (mode) {
         case "convert": {
-          // ========== 1. 格式转换：只生成下载链接，不自动下载 ==========
+          // ========== 1. 格式转换：标记可下载，不再依赖 base64 ==========
           form.append("targetFormat", targetFormat);
           showHelper(t.helperConverting);
 
           data = await convertImage(form);
-          // 预期后端返回：base64 / filename / contentType / width / height 等
-          if (data && data.base64) {
-            const info = {
-              base64: data.base64,
-              filename:
-                  data.filename || `converted.${targetFormat || "png"}`,
-              contentType: data.contentType || "image/*",
-            };
-            setConvertedInfo(info);
-            showHelper(t.helperConvertSuccessWithLink, "success");
-          } else {
-            showHelper(
-                t.helperErrorPrefix +
-                "No base64 data returned from server.",
-                "error"
-            );
-          }
+
+          // 只要后端没有抛异常即视为成功，记录一个建议的下载文件名
+          const fallbackName = `converted.${targetFormat || "png"}`;
+          const nameFromServer =
+            (data && (data.filename || data.targetFormat)) || "";
+          const finalName = nameFromServer || fallbackName;
+
+          setConvertFilename(finalName);
+          setCanDownloadConverted(true);
+
+          showHelper(t.helperConvertSuccessWithLink, "success");
           break;
         }
 
@@ -375,6 +375,45 @@ export default function App() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  /**
+   * 点击“下载转换结果”按钮时触发：
+   *  - 使用原始 file + targetFormat 请求 /api/image/download
+   *  - 后端返回 Blob，前端使用 a 标签触发浏览器下载
+   */
+  const handleDownloadConverted = async () => {
+    if (!file || !canDownloadConverted) {
+      showHelper(
+        lang === "zh"
+          ? "请先完成一次格式转换。"
+          : "Please finish a conversion first.",
+        "error"
+      );
+      return;
+    }
+
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("targetFormat", targetFormat);
+
+      const blob = await downloadConverted(form);
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = convertFilename || `converted.${targetFormat || "png"}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      showHelper(
+        t.helperErrorPrefix + (e?.message || "Download failed"),
+        "error"
+      );
     }
   };
 
@@ -610,18 +649,17 @@ export default function App() {
                       </div>
                   </div>
               )}
-            {/* 格式转换模式下的下载链接展示区域（新增，不自动下载） */}
-            {mode === "convert" && convertedInfo && convertedInfo.base64 && (
-                <div className="form-row">
-                  <div className="preview-label">
-                    <a
-                        href={`data:${convertedInfo.contentType};base64,${convertedInfo.base64}`}
-                        download={convertedInfo.filename}
-                    >
-                      {t.downloadLinkText}
-                    </a>
-                  </div>
-                </div>
+            {/* 格式转换模式下的下载按钮展示区域（不依赖 base64） */}
+            {mode === "convert" && canDownloadConverted && (
+              <div className="form-row">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={handleDownloadConverted}
+                >
+                  {t.downloadLinkText}
+                </button>
+              </div>
             )}
 
             {/* 提示信息 */}
@@ -653,6 +691,8 @@ export default function App() {
                     setPreviewUrl(null);
                     setConvertedInfo(null);
                     setOcrText("");
+                    setCanDownloadConverted(false);
+                    setConvertFilename("");
                   }}
               >
                 {t.btnClear}

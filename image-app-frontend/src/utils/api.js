@@ -92,6 +92,10 @@ async function postForm(urlPath, formData) {
  *     height: 768,
  *     targetFormat: "png"
  *   }
+ *
+ * 说明：
+ *   前端现在不再强依赖 base64 字段，只要后端成功返回即可，
+ *   实际下载动作通过 downloadConverted 再走一次 /api/image/download。
  */
 export async function convertImage(formData) {
   return postForm("/api/image/convert", formData);
@@ -169,4 +173,36 @@ export async function cropImage(formData) {
  */
 export async function resizeImage(formData) {
   return postForm("/api/image/resize", formData);
+}
+
+/**
+ * 图片转换结果下载接口
+ * 后端：POST /api/image/download
+ *
+ * @param {FormData} formData 需要包含：
+ *   - file: 原始图片文件（与 convert 时一致）
+ *   - targetFormat: 目标格式
+ * @returns {Promise<Blob>} 图片二进制 Blob，用于触发浏览器下载
+ *
+ * 使用方式（在 App.jsx 中）：
+ *   const form = new FormData();
+ *   form.append("file", file);
+ *   form.append("targetFormat", targetFormat);
+ *   const blob = await downloadConverted(form);
+ *   // 然后用 a 标签触发浏览器下载
+ */
+export async function downloadConverted(formData) {
+  const resp = await fetch(`${BASE_URL}/api/image/download`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text().catch(() => "");
+    throw new Error(
+        `HTTP ${resp.status}: ${text || "Download request failed"}`
+    );
+  }
+
+  return resp.blob();
 }
