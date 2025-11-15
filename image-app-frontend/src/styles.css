@@ -212,31 +212,29 @@ body {
 /* ================== 5 个工具模块按钮 ================== */
 /* 顶部一整条功能带：紧贴标题下面，左右铺满 */
 
+/* ================== 5 个工具模块按钮 ================== */
+/* 顶部一整条功能带：紧贴标题下面，左右铺满，与下方画布同宽 */
+
 .mode-tabs {
-  margin-top: 16px;
-  padding: 10px 12px;
-  border-radius: 18px;
-  background: radial-gradient(
-          circle at top,
-          rgba(15, 23, 42, 0.98),
-          rgba(15, 23, 42, 0.95)
-  );
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  display: flex;
-  gap: 12px;
-  align-items: stretch;
+  margin: 16px 0 12px;                 /* 跟下方画布上下间距 */
+  padding: 0;                          /* 让按钮自己撑满 */
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));  /* 5 等分，刚好一条带 */
+  overflow: hidden;                    /* 圆角由外层统一控制 */
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
 }
 
-/* 每个模式按钮：一整条功能带里的大按钮，支持两行文字（标题 + 描述） */
+/* 每个模式按钮：一整条功能带里的大按钮，居中显示标题 / 描述 */
 
 .tab {
   position: relative;
-  flex: 1 1 0;
-  min-height: 72px;                 /* 按钮变高，更像一个模块卡片 */
-  border-radius: 14px;
+  min-height: 86px;                    /* 按钮更高，更像主导航模块 */
+  border-radius: 0;                    /* 用外层 .mode-tabs 的圆角 */
   padding: 10px 16px;
-  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-right: 1px solid rgba(148, 163, 184, 0.35);   /* 按钮之间的分割线 */
   background: linear-gradient(
           135deg,
           rgba(15, 23, 42, 0.98),
@@ -246,18 +244,69 @@ body {
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
+
   display: flex;
-  flex-direction: column;           /* 上下两行：功能名 + 描述 */
-  align-items: flex-start;
-  justify-content: center;
-  text-align: left;
-  gap: 3px;
+  flex-direction: column;              /* 上下两行：功能名 + 描述（如果有） */
+  align-items: center;                 /* 水平居中 */
+  justify-content: center;            /* 垂直居中 */
+  text-align: center;
+  gap: 4px;
+
   transition:
           border-color 0.16s ease,
           box-shadow 0.16s ease,
           transform 0.12s ease,
           background 0.16s ease,
           color 0.16s ease;
+}
+
+/* 最右侧按钮不画右边界线，避免多一条竖线 */
+
+.tab:last-child {
+  border-right: none;
+}
+
+/* 轻微高亮描边，用于 hover / active */
+
+.tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(129, 140, 248, 0);
+  pointer-events: none;
+  transition: border-color 0.16s ease;
+}
+
+.tab strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.tab:hover {
+  border-color: rgba(129, 140, 248, 0.85);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.9);
+}
+
+.tab:hover::before {
+  border-color: rgba(129, 140, 248, 0.8);
+}
+
+/* 选中态：高亮渐变 */
+
+.tab-active {
+  background: var(--accent-gradient);
+  color: #020617;
+  border-color: rgba(191, 219, 254, 0.95);
+  box-shadow:
+          0 14px 32px rgba(79, 70, 229, 0.9),
+          0 0 0 1px rgba(191, 219, 254, 0.7);
+}
+
+.tab-active strong {
+  color: #020617;
 }
 
 /* 轻微高亮描边，用于 hover / active */
