@@ -306,44 +306,68 @@ export default function App() {
           <h1 className="page-title">{t.title}</h1>
           <p className="page-subtitle">{t.subtitle}</p>
 
-          {/* 五个大功能模块按钮 */}
-          <div className="tool-strip">
+          {/* 五个大功能模块按钮：横向功能带，大按钮 + 描述 */}
+          <nav className="tool-strip" aria-label="Image tools">
             <button
+              type="button"
               className={mode === "convert" ? "tool-pill tool-pill-active" : "tool-pill"}
               onClick={() => updateUrl("convert")}
             >
-              <div className="tool-pill-title">{t.convertTab}</div>
+              <div className="tool-pill-header">
+                <span className="tool-pill-icon">🌀</span>
+                <span className="tool-pill-title">{t.convertTab}</span>
+              </div>
               <div className="tool-pill-desc">{t.convertDesc}</div>
             </button>
+
             <button
+              type="button"
               className={mode === "ocr" ? "tool-pill tool-pill-active" : "tool-pill"}
               onClick={() => updateUrl("ocr")}
             >
-              <div className="tool-pill-title">{t.ocrTab}</div>
+              <div className="tool-pill-header">
+                <span className="tool-pill-icon">🔍</span>
+                <span className="tool-pill-title">{t.ocrTab}</span>
+              </div>
               <div className="tool-pill-desc">{t.ocrDesc}</div>
             </button>
+
             <button
+              type="button"
               className={mode === "compress" ? "tool-pill tool-pill-active" : "tool-pill"}
               onClick={() => updateUrl("compress")}
             >
-              <div className="tool-pill-title">{t.compressTab}</div>
+              <div className="tool-pill-header">
+                <span className="tool-pill-icon">🗜</span>
+                <span className="tool-pill-title">{t.compressTab}</span>
+              </div>
               <div className="tool-pill-desc">{t.compressDesc}</div>
             </button>
+
             <button
+              type="button"
               className={mode === "crop" ? "tool-pill tool-pill-active" : "tool-pill"}
               onClick={() => updateUrl("crop")}
             >
-              <div className="tool-pill-title">{t.cropTab}</div>
+              <div className="tool-pill-header">
+                <span className="tool-pill-icon">✂️</span>
+                <span className="tool-pill-title">{t.cropTab}</span>
+              </div>
               <div className="tool-pill-desc">{t.cropDesc}</div>
             </button>
+
             <button
+              type="button"
               className={mode === "resize" ? "tool-pill tool-pill-active" : "tool-pill"}
               onClick={() => updateUrl("resize")}
             >
-              <div className="tool-pill-title">{t.resizeTab}</div>
+              <div className="tool-pill-header">
+                <span className="tool-pill-icon">📐</span>
+                <span className="tool-pill-title">{t.resizeTab}</span>
+              </div>
               <div className="tool-pill-desc">{t.resizeDesc}</div>
             </button>
-          </div>
+          </nav>
         </section>
 
         {/* 主功能画布：左右拉满，整体高度占视口上方区域 */}
