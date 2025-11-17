@@ -1,35 +1,188 @@
-<!doctype html>
-<html lang="zh-CN">
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta name="description" content="Free online OCR and text tools: convert images to text, change image formats, clean text, remove line breaks, format JSON, and more.">
+    <meta name="keywords" content="how to ocr, free ocr tool, image to text converter, best online ocr 2025, convert jpg to text, convert png to text, extract text from image, online text tools, remove line breaks online, clean text formatting, format json online, image format converter, pdf to text converter, base64 encoder decoder, web developer tools online">
+
+    <!--
+      Author:XYH
+      Date:2025-11-14
+      Description: 前端入口 HTML，集成完整 SEO / OpenGraph / Twitter Card / Google Ads 配置（优化版）
+    -->
+
+    <!--umami analytics-->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="ac210a7e-6248-45f2-b211-2c0b438cd49e"></script>
+
+    <!-- 基础编码与视口 -->
     <meta charset="UTF-8" />
-    <title>XYH 在线文本与文件工具平台 | OCR / 文本提取 / 文本工具 / 在线编辑</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="XYH 在线文本与文件工具平台，提供图片 OCR 文字识别、PDF/Word 文本提取、在线文本工具与在线编辑功能，适合开发者、写作者与办公用户。">
-    <meta name="keywords" content="在线 OCR, 图片转文字, PDF 提取文字, 在线文本工具, 文本编辑器, remove line breaks, word counter" />
-    <meta name="robots" content="index,follow" />
-    <link rel="canonical" href="https://xyh.wiki/" />
-    <meta property="og:title" content="XYH 在线文本与文件工具平台" />
-    <meta property="og:description" content="一站式在线文本与文件处理工具，覆盖 OCR、二进制文件文本提取、文本工具与在线编辑。" />
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+
+    <!--
+      页面标题（搜索结果与浏览器标题栏）
+      - 同时包含英文品牌 + 中文核心功能关键词
+      - 控制在 ~60–65 字符附近，有利于搜索结果完整展示
+    -->
+    <title>
+        Image Convert & OCR - 在线图片格式转换与图片文字识别 (PNG / JPG / WebP / TIFF)
+    </title>
+
+    <!--
+      核心描述（合并中英文到一条 description，避免多条同名 meta 被忽略）
+      - 前半段英文，后半段中文，兼顾中英文检索场景
+    -->
+    <meta
+            name="description"
+            content="Free online image format converter and OCR text extraction tool. Supports PNG, JPG, WebP, TIFF, BMP, GIF, PSD with secure, no-login processing. 免费在线图片格式转换与 OCR 文字识别工具，支持 PNG、JPG、WebP、TIFF、GIF、BMP、PSD 等格式，无需登录，安全便捷。"
+    />
+
+    <!-- 关键词（适度保留，主要针对长尾检索） -->
+    <meta
+            name="keywords"
+            content="image converter,image convert online,online OCR,image to text,PNG to JPG,WebP to PNG,TIFF to JPG,PSD to PNG,图片格式转换,在线OCR,图片转文字,图片转文本,图片压缩,图片裁剪,图片尺寸调整"
+    />
+
+    <!-- 作者信息（可选，对 SEO 略有辅助，对浏览器/工具更友好） -->
+    <meta name="author" content="XYH" />
+
+    <!-- 告诉搜索引擎可以正常收录 -->
+    <meta name="robots" content="index, follow" />
+
+    <!-- 主题色（移动端地址栏、PWA 效果） -->
+    <meta name="theme-color" content="#2d71f2" />
+
+    <!-- Canonical 与多语言标记：当前站点中英文共用同一 URL -->
+    <link rel="canonical" href="https://ocr.xyh.wiki/" />
+    <link rel="alternate" href="https://ocr.xyh.wiki/" hreflang="en" />
+    <link rel="alternate" href="https://ocr.xyh.wiki/" hreflang="zh-CN" />
+    <link rel="alternate" href="https://ocr.xyh.wiki/" hreflang="x-default" />
+
+    <!-- Open Graph（社交分享：微信、Facebook、Twitter 等使用） -->
+    <meta property="og:title" content="Online Image Converter & OCR Tool" />
+    <meta
+            property="og:description"
+            content="Convert image formats (PNG, JPG, WebP, TIFF, GIF, BMP, PSD) or extract text via OCR. Fast, free, and no login required."
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://xyh.wiki/" />
-    <meta property="og:site_name" content="XYH Tools" />
-    <!-- JSON-LD 结构化数据（Website + Organization 简化版） -->
+    <meta property="og:url" content="https://ocr.xyh.wiki/" />
+    <!-- 站点名称，有利于品牌展示 -->
+    <meta property="og:site_name" content="Image Convert & OCR" />
+    <!-- 主要语言环境及备选 -->
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="zh_CN" />
+    <!-- 预览图：请确保 preview.png 已部署到对应路径 -->
+    <meta property="og:image" content="https://ocr.xyh.wiki/seo/preview.png" />
+
+    <!-- Twitter Card（在 X / Twitter 中的卡片展示） -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Online Image Converter & OCR" />
+    <meta
+            name="twitter:description"
+            content="Free tool to convert images and extract text with OCR. No installation, no login."
+    />
+    <meta
+            name="twitter:image"
+            content="https://ocr.xyh.wiki/seo/preview.png"
+    />
+    <!-- 如后续有 Twitter 账号，可在此补充 -->
+    <!-- <meta name="twitter:site" content="@your_account" /> -->
+
+    <!-- 站点图标与 Apple Touch Icon（可直接复用 preview.png，后续可以换为独立 favicon） -->
+    <link rel="icon" type="image/png" href="/seo/preview.png" />
+    <link rel="apple-touch-icon" href="/seo/preview.png" />
+
+    <!--
+      结构化数据 1：WebSite
+      帮助搜索引擎理解站点整体信息，有利于品牌 + 站内搜索框展示
+    -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "XYH Tools",
-      "url": "https://xyh.wiki/",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://xyh.wiki/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Image Convert & OCR",
+            "url": "https://ocr.xyh.wiki/",
+            "description": "Online image format converter with optional OCR text extraction. Supports PNG, JPG, WebP, TIFF, GIF, BMP, PSD.",
+            "inLanguage": ["en", "zh-CN"],
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://ocr.xyh.wiki/?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
     </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+    <!--
+      结构化数据 2：WebApplication
+      把当前站点标注为“在线工具应用”，有利于在搜索结果中显示为工具型服务
+    -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Image Convert & OCR",
+            "url": "https://ocr.xyh.wiki/",
+            "applicationCategory": "Multimedia",
+            "operatingSystem": "Any",
+            "description": "Web-based image converter and OCR text extraction tool. Supports PNG, JPG, WebP, TIFF, GIF, BMP, PSD formats with online conversion, compression, cropping and resizing.",
+            "inLanguage": ["en", "zh-CN"],
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            }
+        }
+    </script>
+
+    <!-- Google Ads（使用你自己的发布者 ID） -->
+    <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8907413334960000"
+            crossorigin="anonymous"
+    ></script>
+
+    <!--
+      Vite 在打包时会替换样式与脚本路径；
+      开发环境下引用 /src/styles.css，生产环境由 Vite 自动注入真实构建产物
+    -->
+    <link rel="stylesheet" href="/src/styles.css" />
+
+    <!--
+      为了在 React / CSS 尚未加载完时避免闪烁，这里补充一点极简布局样式：
+      仅用于“骨架屏”，真正的 UI 由 styles.css 与 React 控制
+    -->
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(
+                    circle at top left,
+                    #f0f4ff,
+                    #f7f8fc 45%,
+                    #eef3ff 100%
+            );
+            font-family: system-ui, -apple-system, BlinkMacSystemFont,
+            "Segoe UI", sans-serif;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 无 JS 提示，对 SEO 也友好一些 -->
+<noscript>
+    This site requires JavaScript to run the image converter and OCR tools.
+</noscript>
+
+<!-- React 挂载点：具体 UI 布局在 src/main.jsx / src/App.jsx 中实现 -->
+<div id="root"></div>
+
+<!-- Vite 入口脚本 -->
+<script type="module" src="/src/main.jsx"></script>
+</body>
 </html>
