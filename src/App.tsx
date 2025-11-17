@@ -11,15 +11,15 @@
 import React from "react";
 import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 
-import HomePage from "./pages/HomePage.jsx";
-import ToolsPage from "./pages/ToolsPage.jsx";
-import AboutPage from "./pages/AboutPage.jsx";
-import FAQPage from "./pages/FAQPage.jsx";
-import ContactPage from "./pages/ContactPage.jsx";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.jsx";
-import TermsOfServicePage from "./pages/TermsOfServicePage.jsx";
-import SitemapPage from "./pages/SitemapPage.jsx";
-import SearchPage from "./pages/SearchPage.jsx";
+import HomePage from "./pages/HomePage";
+import ToolsPage from "./pages/ToolsPage";
+import AboutPage from "./pages/AboutPage";
+import FAQPage from "./pages/FAQPage";
+import ContactPage from "./pages/ContactPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
+import SitemapPage from "./pages/SitemapPage";
+import SearchPage from "./pages/SearchPage";
 
 /**
  * 面包屑组件：根据当前路径简单拆分为 Home / 子页面

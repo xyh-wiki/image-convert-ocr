@@ -1,95 +1,58 @@
+
 /**
  * @Author:XYH
- * @Date:2025-11-17
- * @Description: Search result page (simple frontend-only matching)
+ * @Date:2025-11-18
+ * @Description: Search 页面 —— 站内搜索（基于静态路由与描述）
  */
-import React from 'react'
-import { useLocation, Link } from 'react-router-dom'
-import { Breadcrumbs } from '../components/common/Breadcrumbs'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-interface SearchItem {
-  path: string
-  title: string
-  keywords: string[]
-}
+const searchItems = [
+  { path: "/", title: "Home", keywords: "home hero banner ocr tools" },
+  { path: "/tools", title: "OCR & Image Tools", keywords: "ocr image to text converter image format convert" },
+  { path: "/about", title: "About", keywords: "about platform introduction" },
+  { path: "/faq", title: "FAQ", keywords: "faq help questions" },
+  { path: "/contact", title: "Contact", keywords: "contact email feedback form" },
+  { path: "/privacy", title: "Privacy Policy", keywords: "privacy policy data" },
+  { path: "/terms", title: "Terms of Service", keywords: "terms of service agreement" },
+  { path: "/sitemap", title: "Sitemap", keywords: "sitemap navigation" },
+];
 
-const SEARCH_INDEX: SearchItem[] = [
-  {
-    path: '/products/ocr',
-    title: 'Image OCR & format conversion',
-    keywords: ['ocr', 'image', 'image to text', 'scan', 'screenshot']
-  },
-  {
-    path: '/products/binary-extract',
-    title: 'Binary file text extraction',
-    keywords: ['binary', 'pdf', 'word', 'text extract', 'document']
-  },
-  {
-    path: '/products/text-tools',
-    title: 'Online text tools',
-    keywords: ['text tools', 'remove line breaks', 'word counter', 'json format']
-  },
-  {
-    path: '/products/edit-text',
-    title: 'Online text editor & cleanup',
-    keywords: ['text editor', 'edit text', 'clean formatting', 'paragraphs']
-  },
-  {
-    path: '/faq',
-    title: 'Frequently asked questions',
-    keywords: ['faq', 'questions', 'upload', 'privacy']
-  }
-]
+export default function SearchPage() {
+  const [query, setQuery] = useState("");
 
-function useQuery(): URLSearchParams {
-  const { search } = useLocation()
-  return new URLSearchParams(search)
-}
-
-export const SearchPage: React.FC = () => {
-  const query = useQuery()
-  const q = (query.get('q') ?? '').trim().toLowerCase()
-
+  const q = query.trim().toLowerCase();
   const results = q
-    ? SEARCH_INDEX.filter(item => {
-        return (
+    ? searchItems.filter(
+        (item) =>
           item.title.toLowerCase().includes(q) ||
-          item.keywords.some(k => k.toLowerCase().includes(q))
-        )
-      })
-    : []
+          item.keywords.toLowerCase().includes(q)
+      )
+    : [];
 
   return (
-    <>
-      <Breadcrumbs
-        items={[
-          { label: 'Home', to: '/' },
-          { label: 'Search' }
-        ]}
-      />
-      <section className="section">
-        <div className="section-header">
-          <h1 className="section-title">Search results</h1>
-          <p className="section-description">
-            Query:{' '}
-            <strong>
-              {q || '(nothing entered yet – use the search icon in the header or add ?q=keyword)'}
-            </strong>
-          </p>
-        </div>
-        {q && results.length === 0 && (
-          <p style={{ fontSize: 14, color: '#4b5563' }}>
-            No matching pages were found. Try a more general keyword such as "OCR" or "text".
-          </p>
-        )}
-        <ul style={{ fontSize: 14, color: '#4b5563', paddingLeft: 18 }}>
-          {results.map(item => (
-            <li key={item.path}>
+    <div className="page page-search">
+      <h1>Site Search</h1>
+      <p>Search across the main pages and tools using keywords such as “ocr”, “image to text”, or “json”.</p>
+      <div className="search-box">
+        <input
+          type="text"
+          placeholder="Type to search…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+      <div className="search-results">
+        {q && results.length === 0 && <p>No results found.</p>}
+        {results.map((item) => (
+          <div className="search-result" key={item.path}>
+            <h2>
               <Link to={item.path}>{item.title}</Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </>
-  )
+            </h2>
+            <p className="search-keywords">{item.keywords}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

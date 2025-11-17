@@ -15,7 +15,7 @@ import {
   compressImage,
   cropImage,
   resizeImage,
-} from "../utils/api.js";
+} from "../utils/api";
 
 /**
  * 多语言文案定义
