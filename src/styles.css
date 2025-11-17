@@ -1081,3 +1081,219 @@ body {
   font-size: 0.8rem;
   color: var(--color-text-muted);
 }
+/* =========================================================
+ * 亮色主题下 Tools 页面重新设计（覆盖原有暗色视觉）
+ * 追加在 styles.css 最后即可，不改动原逻辑
+ * ======================================================= */
+
+.site-root.theme-light .app-shell {
+  background: var(--color-bg, #f7f9fc);
+}
+
+/* 主内容区域留白更大一些 */
+.site-root.theme-light .app-main {
+  padding: 24px 24px 40px;
+}
+
+/* 顶部品牌区域：弱化深色边框，整体偏浅色 */
+.site-root.theme-light .app-header-inner {
+  border-bottom: none;
+}
+
+/* 品牌图标稍微减弱高光感 */
+.site-root.theme-light .brand-icon {
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.35);
+}
+
+/* 语言切换条：去掉深色背景，改成浅灰 */
+.site-root.theme-light .lang-switch {
+  background: #f3f4f6;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow: none;
+}
+
+.site-root.theme-light .lang-btn {
+  color: #4b5563;
+}
+
+.site-root.theme-light .lang-btn-active {
+  background: #111827;
+  color: #f9fafb;
+}
+
+/* =============== 顶部 5 个功能 Tabs =============== */
+
+.site-root.theme-light .mode-tabs {
+  margin: 20px 0 16px;
+  padding: 0;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid rgba(209, 213, 219, 0.9);
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.06);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.site-root.theme-light .tab {
+  min-height: 80px;
+  border-right: 1px solid rgba(229, 231, 235, 1);
+  background: transparent;
+  color: #4b5563;
+}
+
+.site-root.theme-light .tab:last-child {
+  border-right: none;
+}
+
+.site-root.theme-light .tab strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: #111827;
+}
+
+.site-root.theme-light .tab span {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.site-root.theme-light .tab:hover {
+  background: #f3f4f6;
+}
+
+/* 激活态：蓝色主色渐变 + 白字 */
+.site-root.theme-light .tab-active {
+  background: linear-gradient(135deg, #0a84ff, #6366f1);
+  color: #f9fafb;
+  border-right-color: transparent;
+}
+
+.site-root.theme-light .tab-active strong,
+.site-root.theme-light .tab-active span {
+  color: #f9fafb;
+}
+
+/* =============== 主卡片区域 =============== */
+
+.site-root.theme-light .card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px 22px 22px;
+  min-height: 60vh;
+  box-shadow:
+          0 0 0 1px rgba(226, 232, 240, 0.9),
+          0 18px 40px rgba(15, 23, 42, 0.06);
+}
+
+/* 卡片标题行 */
+.site-root.theme-light .card-title {
+  color: #111827;
+}
+
+.site-root.theme-light .card-subtitle {
+  color: #6b7280;
+}
+
+/* 上传区域改成浅色虚线框样式 */
+.site-root.theme-light .upload-area {
+  border-radius: 16px;
+  border: 1px dashed rgba(148, 163, 184, 0.9);
+  padding: 16px 18px;
+  background: #f9fafb;
+  box-shadow: none;
+}
+
+.site-root.theme-light .upload-area:hover {
+  border-color: #0a84ff;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+  transform: translateY(-1px);
+}
+
+.site-root.theme-light .upload-icon {
+  background: #e5edff;
+  color: #1d4ed8;
+}
+
+.site-root.theme-light .upload-main {
+  color: #111827;
+}
+
+.site-root.theme-light .upload-sub,
+.site-root.theme-light .upload-meta {
+  color: #6b7280;
+}
+
+/* 表单字段：更接近常见在线工具的浅灰输入框风格 */
+.site-root.theme-light .field-input,
+.site-root.theme-light .field-select {
+  background: #f9fafb;
+  border-color: rgba(209, 213, 219, 1);
+  box-shadow: none;
+}
+
+.site-root.theme-light .field-input:focus,
+.site-root.theme-light .field-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+}
+
+/* Slider 颜色淡化一点 */
+.site-root.theme-light input[type="range"] {
+  accent-color: #2563eb;
+}
+
+/* OCR 结果区域：白色卡片感 */
+.site-root.theme-light .ocr-result-wrapper {
+  margin-top: 10px;
+}
+
+.site-root.theme-light .ocr-result-textarea {
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid rgba(209, 213, 219, 1);
+  box-shadow: none;
+  color: #111827;
+}
+
+/* 底部按钮区：与全站按钮保持一致 */
+.site-root.theme-light .btn-primary,
+.site-root.theme-light .btn-primary[type="button"] {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.25);
+}
+
+.site-root.theme-light .btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.site-root.theme-light .btn-ghost {
+  border-color: rgba(209, 213, 219, 1);
+  background: #ffffff;
+  color: #111827;
+}
+
+.site-root.theme-light .btn-ghost:hover {
+  background: #f3f4f6;
+}
+
+/* Helper 提示文本颜色更柔和 */
+.site-root.theme-light .helper-text {
+  color: #6b7280;
+}
+
+.site-root.theme-light .helper-text-error {
+  color: #b91c1c;
+}
+
+.site-root.theme-light .helper-text-success {
+  color: #15803d;
+}
+
+/* Footer 边界线变浅，避免“压住”整个页面 */
+.site-root.theme-light .app-footer-inner {
+  border-top: 1px solid rgba(209, 213, 219, 1);
+}
+
+.site-root.theme-light .footer-text {
+  color: #6b7280;
+}
