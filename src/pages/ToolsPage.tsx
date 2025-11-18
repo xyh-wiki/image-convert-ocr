@@ -2,13 +2,19 @@
  * @Author:XYH
  * @Date:2025-11-18
  * @Description:
- *  图片工具平台前端 Tools 页面 —— 全新浅色 UI 版本
+ *  图片工具平台前端 Tools 页面 —— 全新浅色 UI 版本（TypeScript 修正版）
  *  - 左侧：模式切换 / 上传 / 参数设置 / 操作按钮
  *  - 右侧：图片预览 / OCR 文本结果 / 结果信息
- *  - 完全前端实现：与 utils/api.js 中的前端 Canvas + OCRSpace 调用匹配
+ *  - 完全前端实现：与 utils/api.ts 中的前端 Canvas + OCRSpace 调用匹配
  */
 
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  ChangeEvent,
+  DragEvent,
+} from "react";
 import {
   convertImage,
   ocrImage,
@@ -16,6 +22,7 @@ import {
   cropImage,
   resizeImage,
 } from "../utils/api";
+import type { ImageProcessResult } from "../utils/api";
 
 /**
  * 多语言文案定义
@@ -125,7 +132,8 @@ const texts = {
     helperErrorPrefix: "错误：",
 
     ocrResultLabel: "OCR 识别结果",
-    ocrResultPlaceholder: "识别后的文本将显示在这里，可直接复制使用…",
+    ocrResultPlaceholder:
+        "识别后的文本将显示在这里，可直接复制使用…",
     previewTitle: "图片预览",
     previewEmpty: "请先上传图片，这里会展示预览效果。",
 
@@ -138,28 +146,39 @@ const texts = {
   },
 };
 
+type Lang = "en" | "zh";
+type HelperType = "info" | "success" | "error";
+type Mode = "convert" | "ocr" | "compress" | "crop" | "resize";
+
+type Texts = (typeof texts)[Lang];
+
 /**
  * 根据语言获取文案
+ * @param lang 当前语言
  */
-function useTexts(lang) {
+function useTexts(lang: Lang): Texts {
   return texts[lang] || texts.en;
 }
 
 /**
  * ToolsPage 主组件
  */
-export default function ToolsPage() {
+export default function ToolsPage(): JSX.Element {
   // ========== 语言与文案 ==========
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState<Lang>("en");
   const t = useTexts(lang);
 
   // ========== 模式相关 ==========
-  const [mode, setMode] = useState("convert");
+  const [mode, setMode] = useState<Mode>("convert");
+
   // ========== 文件与预览 ==========
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
 
-  // ========== 结果相关（与前端 api.js 返回结构匹配） ==========
+  // input[file] 的 ref，用于点击整个上传区域触发文件选择弹窗
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // ========== 结果相关（与前端 api.ts 返回结构匹配） ==========
   const [downloadBlob, setDownloadBlob] = useState<Blob | null>(null);
   const [downloadName, setDownloadName] = useState<string>("");
   const [ocrText, setOcrText] = useState<string>("");
@@ -167,7 +186,9 @@ export default function ToolsPage() {
   const [resultHeight, setResultHeight] = useState<number | null>(null);
 
   // ========== 参数状态 ==========
-  const [targetFormat, setTargetFormat] = useState<"png" | "jpg" | "webp">("png");
+  const [targetFormat, setTargetFormat] = useState<"png" | "jpg" | "webp">(
+      "png"
+  );
   const [compressQuality, setCompressQuality] = useState<number>(80);
   const [cropX, setCropX] = useState<number>(0);
   const [cropY, setCropY] = useState<number>(0);
@@ -178,7 +199,7 @@ export default function ToolsPage() {
 
   // ========== 提示 / 状态 ==========
   const [helper, setHelper] = useState<string>("");
-  const [helperType, setHelperType] = useState<"info" | "success" | "error">("info");
+  const [helperType, setHelperType] = useState<HelperType>("info");
   const [processing, setProcessing] = useState<boolean>(false);
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
 
@@ -191,13 +212,21 @@ export default function ToolsPage() {
     };
   }, [previewUrl]);
 
-  /** 显示提示信息 */
-  function showHelper(msg, type = "info") {
+  /**
+   * 显示提示信息
+   * @param msg 提示文案
+   * @param type 提示类型 info/success/error
+   */
+  function showHelper(msg: string, type: HelperType = "info"): void {
     setHelper(msg);
     setHelperType(type);
   }
-  /** 应用新文件，生成预览并清理之前结果 */
-  function applyNewFile(f) {
+
+  /**
+   * 应用新文件，生成预览并清理之前结果
+   * @param f 新上传的文件
+   */
+  function applyNewFile(f: File): void {
     setFile(f);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     const url = URL.createObjectURL(f);
@@ -212,24 +241,45 @@ export default function ToolsPage() {
     showHelper("", "info");
   }
 
-  /** input 选择文件 */
-  function handleFileChange(e) {    const f = e.target.files?.[0];
+  /**
+   * input 选择文件
+   */
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>): void {
+    const f = e.target.files?.[0];
     if (!f) return;
     applyNewFile(f);
   }
 
-  /** 拖拽上传 */
-  function handleDrop(e) {    e.preventDefault();
+  /**
+   * 拖拽上传
+   */
+  function handleDrop(e: DragEvent<HTMLDivElement>): void {
+    e.preventDefault();
     const f = e.dataTransfer.files?.[0];
     if (!f) return;
     applyNewFile(f);
   }
 
-  function handleDragOver(e) {    e.preventDefault();
+  /**
+   * drag over 需要阻止默认行为，才能触发 drop
+   */
+  function handleDragOver(e: DragEvent<HTMLDivElement>): void {
+    e.preventDefault();
   }
 
-  /** 清空当前所有状态 */
-  function handleClear() {
+  /**
+   * 点击上传区域时，主动触发隐藏的 input[file] 点击
+   */
+  function handleUploadClick(): void {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }
+
+  /**
+   * 清空当前所有状态
+   */
+  function handleClear(): void {
     setFile(null);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl("");
@@ -241,8 +291,10 @@ export default function ToolsPage() {
     showHelper("", "info");
   }
 
-  /** 统一处理入口：根据当前 mode 调用不同 api.js 方法 */
-  async function handleStart() {
+  /**
+   * 统一处理入口：根据当前 mode 调用不同 api.ts 方法
+   */
+  async function handleStart(): Promise<void> {
     if (!file) {
       showHelper(t.helperNoFile, "error");
       return;
@@ -261,21 +313,23 @@ export default function ToolsPage() {
       const form = new FormData();
       form.append("file", file);
 
+      let res: ImageProcessResult | undefined;
+
       if (mode === "convert") {
         form.append("targetFormat", targetFormat);
-        const res = await convertImage(form);
+        res = await convertImage(form);
         setDownloadBlob(res.blob || null);
         setDownloadName(res.filename || `converted.${targetFormat}`);
         setResultWidth(res.width || null);
         setResultHeight(res.height || null);
         showHelper(t.helperSuccess, "success");
       } else if (mode === "ocr") {
-        const res = await ocrImage(form);
+        res = await ocrImage(form);
         setOcrText(res.text || "");
         showHelper(t.helperSuccess, "success");
       } else if (mode === "compress") {
         form.append("quality", String(compressQuality));
-        const res = await compressImage(form);
+        res = await compressImage(form);
         setDownloadBlob(res.blob || null);
         setDownloadName(res.filename || "compressed.jpg");
         setResultWidth(res.width || null);
@@ -286,7 +340,7 @@ export default function ToolsPage() {
         form.append("y", String(cropY));
         form.append("width", String(cropW));
         form.append("height", String(cropH));
-        const res = await cropImage(form);
+        res = await cropImage(form);
         setDownloadBlob(res.blob || null);
         setDownloadName("cropped.png");
         setResultWidth(res.width || null);
@@ -295,14 +349,14 @@ export default function ToolsPage() {
       } else if (mode === "resize") {
         if (resizeW) form.append("width", String(resizeW));
         if (resizeH) form.append("height", String(resizeH));
-        const res = await resizeImage(form);
+        res = await resizeImage(form);
         setDownloadBlob(res.blob || null);
         setDownloadName("resized.png");
         setResultWidth(res.width || null);
         setResultHeight(res.height || null);
         showHelper(t.helperSuccess, "success");
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       showHelper(
           (t.helperErrorPrefix || "Error: ") + (e?.message || "Unknown error"),
@@ -313,8 +367,10 @@ export default function ToolsPage() {
     }
   }
 
-  /** 下载结果图片（convert/compress/crop/resize） */
-  async function handleDownload() {
+  /**
+   * 下载结果图片（convert/compress/crop/resize）
+   */
+  function handleDownload(): void {
     if (!downloadBlob) return;
 
     const blobToUse = downloadBlob;
@@ -330,8 +386,10 @@ export default function ToolsPage() {
     URL.revokeObjectURL(url);
   }
 
-  /** 复制 OCR 文本 */
-  async function handleCopyText() {
+  /**
+   * 复制 OCR 文本
+   */
+  async function handleCopyText(): Promise<void> {
     if (!ocrText) return;
     try {
       await navigator.clipboard.writeText(ocrText);
@@ -382,7 +440,8 @@ export default function ToolsPage() {
               <button
                   type="button"
                   className={
-                      "tools-lang-btn" + (lang === "en" ? " tools-lang-btn-active" : "")
+                      "tools-lang-btn" +
+                      (lang === "en" ? " tools-lang-btn-active" : "")
                   }
                   onClick={() => setLang("en")}
               >
@@ -391,7 +450,8 @@ export default function ToolsPage() {
               <button
                   type="button"
                   className={
-                      "tools-lang-btn" + (lang === "zh" ? " tools-lang-btn-active" : "")
+                      "tools-lang-btn" +
+                      (lang === "zh" ? " tools-lang-btn-active" : "")
                   }
                   onClick={() => setLang("zh")}
               >
@@ -430,7 +490,8 @@ export default function ToolsPage() {
               <button
                   type="button"
                   className={
-                      "tools-tab" + (mode === "compress" ? " tools-tab-active" : "")
+                      "tools-tab" +
+                      (mode === "compress" ? " tools-tab-active" : "")
                   }
                   onClick={() => setMode("compress")}
               >
@@ -459,11 +520,12 @@ export default function ToolsPage() {
               </button>
             </div>
 
-            {/* 上传区域 */}
+            {/* 上传区域：现在整个区域 onClick 会触发隐藏 input 弹出文件选择框 */}
             <div
                 className="tools-upload-area"
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
+                onClick={handleUploadClick}
             >
               <div className="tools-upload-icon">⬆</div>
               <div className="tools-upload-content">
@@ -473,11 +535,14 @@ export default function ToolsPage() {
                 <div className="tools-upload-hint">{t.uploadHint}</div>
               </div>
               <div className="tools-upload-input-wrapper">
+                {/* 隐藏的 input[file]，只负责触发系统文件选择弹窗 */}
                 <input
+                    ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
                     className="tools-upload-input"
+                    style={{ display: "none" }}
                 />
               </div>
             </div>
@@ -491,7 +556,9 @@ export default function ToolsPage() {
                         className="tools-field-control"
                         value={targetFormat}
                         onChange={(e) =>
-                            setTargetFormat(e.target.value)
+                            setTargetFormat(
+                                e.target.value as "png" | "jpg" | "webp"
+                            )
                         }
                     >
                       <option value="png">PNG</option>
@@ -511,7 +578,9 @@ export default function ToolsPage() {
                         min="20"
                         max="100"
                         value={compressQuality}
-                        onChange={(e) => setCompressQuality(Number(e.target.value))}
+                        onChange={(e) =>
+                            setCompressQuality(Number(e.target.value))
+                        }
                         className="tools-field-range"
                     />
                   </div>
@@ -673,9 +742,7 @@ export default function ToolsPage() {
                         className="tools-preview-image"
                     />
                 ) : (
-                    <div className="tools-preview-empty">
-                      {t.previewEmpty}
-                    </div>
+                    <div className="tools-preview-empty">{t.previewEmpty}</div>
                 )}
               </div>
             </div>
