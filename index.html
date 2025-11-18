@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <meta name="description" content="Free online OCR and text tools: convert images to text, change image formats, clean text, remove line breaks, format JSON, and more.">
-    <meta name="keywords" content="how to ocr, free ocr tool, image to text converter, best online ocr 2025, convert jpg to text, convert png to text, extract text from image, online text tools, remove line breaks online, clean text formatting, format json online, image format converter, pdf to text converter, base64 encoder decoder, web developer tools online">
-
     <!--
       Author:XYH
       Date:2025-11-14
       Description: 前端入口 HTML，集成完整 SEO / OpenGraph / Twitter Card / Google Ads 配置（优化版）
+      站点定位：Online Image Convert & OCR，仅包含：convert / ocr / compress / crop / resize 功能
     -->
 
     <!--umami analytics-->
@@ -32,14 +29,14 @@
 
     <!--
       核心描述（合并中英文到一条 description，避免多条同名 meta 被忽略）
-      - 前半段英文，后半段中文，兼顾中英文检索场景
+      - 仅围绕图片格式转换 + OCR，不再包含 text tools / JSON 等无关功能
     -->
     <meta
             name="description"
             content="Free online image format converter and OCR text extraction tool. Supports PNG, JPG, WebP, TIFF, BMP, GIF, PSD with secure, no-login processing. 免费在线图片格式转换与 OCR 文字识别工具，支持 PNG、JPG、WebP、TIFF、GIF、BMP、PSD 等格式，无需登录，安全便捷。"
     />
 
-    <!-- 关键词（适度保留，主要针对长尾检索） -->
+    <!-- 关键词（适度保留，主要针对长尾检索；仅围绕 convert / ocr / compress / crop / resize） -->
     <meta
             name="keywords"
             content="image converter,image convert online,online OCR,image to text,PNG to JPG,WebP to PNG,TIFF to JPG,PSD to PNG,图片格式转换,在线OCR,图片转文字,图片转文本,图片压缩,图片裁剪,图片尺寸调整"
@@ -116,7 +113,7 @@
 
     <!--
       结构化数据 2：WebApplication
-      把当前站点标注为“在线工具应用”，有利于在搜索结果中显示为工具型服务
+      把当前站点标注为“在线工具应用”，仅描述图片相关功能：转换 / OCR / 压缩 / 裁剪 / 调整尺寸
     -->
     <script type="application/ld+json">
         {
@@ -179,7 +176,7 @@
     This site requires JavaScript to run the image converter and OCR tools.
 </noscript>
 
-<!-- React 挂载点：具体 UI 布局在 src/main.jsx / src/App.jsx 中实现 -->
+<!-- React 挂载点：具体 UI 布局在 src/main.tsx / src/App.tsx 中实现 -->
 <div id="root"></div>
 
 <!-- Vite 入口脚本 -->
