@@ -1306,21 +1306,22 @@ body {
 /* ===== Tools 页面整体布局（/tools） ===== */
 
 /* ============ 顶层容器：整体在页面中居中 ============ */
-
+/* 顶层容器：宽度 85%，整个页面铺开 */
 .tools-page {
-  max-width: 1280px;
-  margin: 32px auto 72px;
-  padding: 0 24px;
+  width: 85%;
+  max-width: 1700px;
+  margin: 32px auto 64px;   /* 顶部 32px，左右自动居中 */
+  padding: 0;
   box-sizing: border-box;
 }
 
-/* 一张大卡片包住 header + content */
-
+/* 大卡片改为“扁长型工具台”，不是小框 */
 .tools-shell {
+  width: 100%;
   background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
-  padding: 24px 28px 28px;
+  border-radius: 22px;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.10);
+  padding: 32px 40px 40px;
   box-sizing: border-box;
 }
 
@@ -1430,52 +1431,58 @@ body {
 
 .tools-layout {
   display: grid;
-  grid-template-columns: minmax(380px, 420px) minmax(0, 1fr);
-  gap: 24px;
-  align-items: flex-start;
+  /*grid-template-columns: 60% 60%;  !* 明确左侧区 35% / 右侧区 65% *!*/
+  gap: 32px;
+  margin-top: 24px;
 }
 
 /* 左右两列不再是“两个大外卡片”，而是在大卡片内部的小区域 */
 
 .tools-left,
 .tools-right {
-  background: #f9fafb;
+  background: #f8fafc;
   border-radius: 18px;
-  padding: 16px 18px 18px;
+  padding: 24px 26px 28px;
   box-sizing: border-box;
+  border: 1px solid #e2e8f0; /* 轻量边框，比阴影更专业 */
+  box-shadow: none;
 }
 
 /* ============ 模式切换 tabs ============ */
 
+/* ===== 模式切换：改成 5 个独立小卡片，不再是大药丸 ===== */
+
 .tools-mode-tabs {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0;
-  border-radius: 999px;
-  background: #e5edff;
-  padding: 4px;
-  margin-bottom: 14px;
+  gap: 10px;                /* 卡片之间留一点间距 */
+  margin-bottom: 16px;
+  background: transparent;  /* 去掉原来的蓝色药丸背景 */
+  padding: 0;
+  border-radius: 0;
 }
 
 .tools-tab {
-  border: none;
-  background: transparent;
-  border-radius: 999px;
-  padding: 8px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #f9fafb;
+  padding: 10px 10px;
   cursor: pointer;
   font-size: 12px;
-  line-height: 1.3;
+  line-height: 1.4;
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   color: #4b5563;
   transition: all 0.18s ease;
+  min-height: 80px;         /* 保证高度一致，不会变成椭圆 */
 }
 
 .tools-tab strong {
   font-size: 13px;
   font-weight: 600;
+  color: #111827;
 }
 
 .tools-tab span {
@@ -1483,11 +1490,18 @@ body {
   color: #6b7280;
 }
 
+.tools-tab:hover {
+  border-color: #c7d2fe;
+  background: #eef2ff;
+}
+
 .tools-tab-active {
-  background: #ffffff;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  border-color: #2563eb;
+  background: linear-gradient(135deg, #e0ecff, #f5f7ff);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
   color: #111827;
 }
+
 
 /* ============ 上传区域 ============ */
 
